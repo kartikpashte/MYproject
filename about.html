@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(45deg, #6cc3b3, #2a8d85);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .page {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            width: 90%;
+            max-width: 1200px;
+            padding: 40px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slidein 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slidein {
+            from {
+                transform: translateY(-100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .left,
+        .right {
+            width: 45%;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .left img {
+            width: 100%;
+            max-width: 350px;
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out, filter 0.3s ease;
+        }
+
+        .left img:hover {
+            transform: scale(1.05);
+            filter: brightness(0.8);
+            cursor: pointer;
+        }
+
+        .right {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .right p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .right p:hover {
+            color: #ff6b6b;
+        }
+
+        .right a {
+            font-size: 1.3rem;
+            color: #ff6b6b;
+            text-decoration: none;
+            font-weight: 500;
+            transition: transform 0.3s ease;
+        }
+
+        .right a:hover {
+            transform: translateY(-3px);
+            text-decoration: underline;
+        }
+
+    
+        @media (max-width: 768px) {
+            .page {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .left,
+            .right {
+                width: 100%;
+                margin-bottom: 30px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .right p {
+                font-size: 1rem;
+            }
+        }
+        @media (max-width: 768px) {
+            .hidden {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>About Us</h1>
+
+    <div class="page">
+        <div class="left">
+            <img src="https://cdn.dribbble.com/userupload/12833208/file/original-e2f8e6039413b916440b576dfcc4aa63.jpg?resize=1024x768&vertical=center alt="
+                alt="Farm Vision Logo">
+        </div>
+
+        <div class="right">
+            <p>Welcome to Kartik Paste's E-commerce Store, your ultimate destination for a diverse range of high-quality products. We've meticulously curated an extensive collection to cater to various tastes and preferences.</p>
+            <p class="hidden">ensuring a seamless online shopping experience. Our user-friendly platform allows you to effortlessly browse, select, and purchase items from the comfort of your home. With secure payment options and prompt delivery services.</p>
+            <p class="hidden">Kartik Paste's E-commerce Store is committed to providing exceptional value and customer satisfaction</p>
+            <p><a href="#">#Marketing #SocialMedia #E-Commerce</a></p>
+        </div>
+    </div>
+
+</body>
+
+</html>

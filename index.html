@@ -1,1 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects</title>
+    <style>
+        /* Global Variables */
+        :root {
+            --primary-color: #00bfae; /* Teal */
+            --secondary-color: #07070d; /* Dark Background */
+            --text-color: #fff;
+            --card-bg-color: #f9f9f9;
+            --hover-color: #00c7b7; /* Lighter Teal */
+            --border-radius: 10px;
+            --transition-speed: 0.3s;
+        }
 
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        h1, h4 {
+            font-weight: normal;
+        }
+
+        header {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            color: var(--text-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        ul {
+            list-style-type: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color var(--transition-speed);
+        }
+
+        ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 40px 20px;
+            width: 100%;
+        }
+
+        .card {
+            background-color: var(--card-bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+        }
+
+        .card img {
+            width: 80%;
+            /* object-fit: cover; */
+            height: auto;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform var(--transition-speed);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card img:hover {
+            transform: scale(1.1);
+        }
+
+        .card h1 {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            color: var(--primary-color);
+        }
+
+        .card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: #777;
+        }
+
+        .card a {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color var(--transition-speed);
+        }
+
+        .card a:hover {
+            background-color: var(--hover-color);
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            ul {
+                gap: 15px;
+                font-size: 0.9rem;
+            }
+
+            .logo h1 {
+                font-size: 1.6rem;
+            }
+
+            .card h1 {
+                font-size: 1.3rem;
+            }
+
+            .card a {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">
+                <h1>Kartik Pashte</h1>
+            </div>
+            <ul>
+                <li><a style="color:#00bfae;" href="">Home</a></li>
+                <li><a href="./portfolio.html">Portfolio</a></li>
+                <li><a href="./about.html">About</a></li>
+                <li><a href="./contact.html">contact</a></li>
+            </ul>
+        </nav>
+
+        <div class="container">
+            <h1 class="title">My Projects</h1>
+            <div class="row">
+                <!-- Tic Tac Toe -->
+                <div class="card">
+                    <img src="./image/image copy 3 (1).png" alt="Tic Tac Toe">
+                    <h1>Tic Tac Toe</h1>
+                    <h4>HTML | CSS | JS</h4>
+                    <a href="./Tic_tac-toe.html">View Project</a>
+                </div>
+
+                <!-- Form -->
+                <div class="card">
+                    <br>
+                    <img style="min-height: 40%;" src="./image/image (1).png" alt="Form">
+                    <br><br>
+                    <h1>Form</h1>
+                    <h4>HTML | CSS | JS</h4>
+                    <br><br>
+                    <a href="./form.html">View Project</a>
+                </div>
+
+                <!-- Digital Clock -->
+                <div class="card">
+                    <img src="./image/image copy (1).png" alt="Digital Clock">
+                    <h1>Digital Clock</h1>
+                    <h4>HTML | CSS | JS</h4>
+                    <a href="./digitalClock.html">View Project</a>
+                </div>
+
+                <!-- Rock Paper Scissor -->
+                <div class="card">
+                    <img src="./image/image copy 2 (1).png" alt="Rock Paper Scissors">
+                    <h1>Rock Paper Scissor</h1>
+                    <h4>HTML | CSS | JS</h4>
+                    <a href="./RockPaperScissor.html">View Project</a>
+                </div>
+
+                <!-- Todo List -->
+                <div class="card">
+                    <img src="./image/image copy 5 (1).png" alt="Todo List">
+                    <h1>Todo List</h1>
+                    <h4>HTML | CSS | JS</h4>
+                    <a href="./todolist.html">View Project</a>
+                </div>
+
+                <!-- Portfolio -->
+                <div class="card">
+                    <img src="./image/image copy 4 (1).png" alt="Portfolio">
+                    <h1>Portfolio</h1>
+                    <h4>HTML | CSS | JS</h4>
+                    <a href="./portfolio.html">View Project</a>
+                </div>
+
+                <div class="card">
+                    <img style="min-height: 40%;" src="https://img.freepik.com/premium-vector/online-shopping-green-banner-with-large-white-title-button-presents-boxes-lying-smartphone-screen-presents-boxes-around_7993-6371.jpg" alt="Portfolio">
+                    <br><br>
+                    <h1>E-Commerce Store</h1>
+                    <h4>HTML | CSS | JS</h4>
+                    <a href="./marketing.html">View Project</a>
+                </div>
+
+                <div class="card">
+                    <img src="./image/image copy 6 (1).png" alt="Portfolio">
+                    <h1>Weather app</h1>
+                    <h4>HTML | CSS | JS</h4>
+                    <a href="./Weather.html">View Project</a>
+                </div>
+
+                <div class="card">
+                    <img src="./image/image copy 7 (1).png" alt="Portfolio">
+                    <h1>Youtube Thumbnail</h1>
+                    <h4>HTML | CSS | JS</h4>
+                    <a href="./youtube.html">View Project</a>
+                </div>
+
+                <div class="card">
+                    <img src="./image/image copy 8.png" alt="Portfolio">
+                    <h1>Coinflip</h1>
+                    <h4>HTML | CSS | JS</h4>
+                    <a href="./coinflip.html">View Project</a>
+                </div>
+
+                <div class="card">
+                    <img src="./image/image copy 9.png" alt="Portfolio">
+                    <h1>DrawingTool</h1>
+                    <h4>HTML | CSS | JS</h4>
+                    <a href="./DrawingTool.html">View Project</a>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+</body>
+</html>

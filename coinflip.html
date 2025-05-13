@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coin Flip</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: lightblue;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: #fff;
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 15px 30px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats {
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .coin {
+            height: 150px;
+            width: 150px;
+            margin: 20px auto;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .coin img {
+            width: 100%;
+        }
+
+        .heads, .tails {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+        }
+
+        .tails {
+            transform: rotateX(180deg);
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            width: 48%;
+            padding: 10px;
+            border: 2px solid lightblue;
+            border-radius: 5px;
+            background: #fff;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        #flip-button:disabled {
+            background-color: lightblue;
+            color: white;
+        }
+
+        @keyframes spin-heads {
+            0% { transform: rotateX(0); }
+            100% { transform: rotateX(2160deg); }
+        }
+
+        @keyframes spin-tails {
+            0% { transform: rotateX(0); }
+            100% { transform: rotateX(1980deg); }
+        }
+
+        #result {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="stats">
+        <p id="heads-count">Heads: 0</p>
+        <p id="tails-count">Tails: 0</p>
+    </div>
+
+    <div class="coin" id="coin">
+        <div class="heads">
+            <img src="https://previews.123rf.com/images/webstocker/webstocker1711/webstocker171100045/89827841-gold-coin-with-letter-h-design.jpg" alt="Heads">
+        </div>
+        <div class="tails">
+            <img src="https://previews.123rf.com/images/webstocker/webstocker1711/webstocker171100050/90456031-gold-coin-with-capital-letter-t-design-vector.jpg" alt="Tails">
+        </div>
+    </div>
+
+    <p id="result">Result: -</p>
+
+    <div class="buttons">
+        <button id="flip-button">Flip</button>
+        <button id="reset-button">Reset</button>
+    </div>
+</div>
+
+<script>
+    let heads = 0;
+    let tails = 0;
+
+    const coin = document.querySelector(".coin");
+    const flipBtn = document.getElementById("flip-button");
+    const resetBtn = document.getElementById("reset-button");
+    const headsCount = document.getElementById("heads-count");
+    const tailsCount = document.getElementById("tails-count");
+    const result = document.getElementById("result");
+
+    flipBtn.addEventListener("click", () => {
+        // % chance of heads
+        const isHeads = Math.random() < 0.5;
+        coin.style.animation = "none";
+
+        setTimeout(() => {
+            coin.style.animation = isHeads ? "spin-heads 3s forwards" : "spin-tails 3s forwards";
+        }, 100);
+
+        setTimeout(() => {
+            if (isHeads) {
+                heads++;
+                result.textContent = "Result: Heads";
+            } else {
+                tails++;
+                result.textContent = "Result: Tails";
+            }
+            updateCounts();
+            flipBtn.disabled = false;
+        }, 3000);
+
+        flipBtn.disabled = true;
+    });
+
+    resetBtn.addEventListener("click", () => {
+        heads = 0;
+        tails = 0;
+        result.textContent = "Result: -";
+        coin.style.animation = "none";
+        updateCounts();
+    });
+
+    function updateCounts() {
+        headsCount.textContent = `Heads: ${heads}`;
+        tailsCount.textContent = `Tails: ${tails}`;
+    }
+</script>
+
+</body>
+</html>
