@@ -3,20 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Drawing Tool</title>
+  <title>Advanced Drawing Tool</title>
   <style>
-    body, html {
+    html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       overflow: hidden;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f0f0f0;
       transition: background 0.3s;
     }
 
     .dark-mode {
-      background-color: #111;
+      background-color: #121212;
+      color: #fff;
     }
 
     .toolbar {
@@ -24,19 +25,21 @@
       top: 10px;
       left: 50%;
       transform: translateX(-50%);
-      background: #fff;
+      background: #ffffffcc;
       border-radius: 10px;
-      padding: 10px 15px;
+      padding: 10px;
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
       z-index: 1000;
+      backdrop-filter: blur(5px);
+      overflow-x: auto;
     }
 
     .dark-mode .toolbar {
-      background: #222;
-      color: #fff;
+      background: #222222cc;
+      color: white;
     }
 
     canvas {
@@ -46,9 +49,15 @@
       cursor: crosshair;
     }
 
-    button, select, input[type="range"] {
-      padding: 5px 10px;
+    button, select, input[type="range"], input[type="checkbox"] {
+      padding: 5px 8px;
       font-size: 14px;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
   </style>
 </head>
@@ -56,7 +65,7 @@
   <div class="toolbar">
     <input type="color" id="colorPicker" />
     <input type="range" id="brushSize" min="1" max="50" value="5" />
-    
+
     <select id="tool">
       <option value="brush">Brush</option>
       <option value="eraser">Eraser</option>
@@ -65,11 +74,13 @@
       <option value="circle">Circle</option>
     </select>
 
+    <label><input type="checkbox" id="fillToggle"> Fill</label>
+
     <button id="undoBtn">Undo</button>
     <button id="redoBtn">Redo</button>
     <button id="clearBtn">Clear</button>
     <button id="saveBtn">Save</button>
-    <button id="themeBtn">Toggle Theme</button>
+    <button id="themeBtn">🌙 Toggle Theme</button>
   </div>
 
   <canvas id="drawingCanvas"></canvas>
@@ -80,53 +91,165 @@
     const colorPicker = document.getElementById('colorPicker');
     const brushSize = document.getElementById('brushSize');
     const tool = document.getElementById('tool');
+    const fillToggle = document.getElementById('fillToggle');
     const undoBtn = document.getElementById('undoBtn');
     const redoBtn = document.getElementById('redoBtn');
     const clearBtn = document.getElementById('clearBtn');
     const saveBtn = document.getElementById('saveBtn');
     const themeBtn = document.getElementById('themeBtn');
 
-    let isDrawing = false;
-    let startX = 0;
-    let startY = 0;
-    let history = [];
-    let redoStack = [];
+    let isDrawing = false, startX = 0, startY = 0;
+    let history = [], redoStack = [];
 
-    function resizeCanvas() {
+    // Utilities
+    const getBackgroundColor = () =>
+      getComputedStyle(document.body).backgroundColor;
+
+    const resizeCanvas = () => {
+      const data = canvas.toDataURL();
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      const img = new Image();
+      img.src = data;
+      img.onload = () => ctx.drawImage(img, 0, 0);
+    };
+
+    const saveState = () => {
+      history.push(canvas.toDataURL());
+      if (history.length > 20) history.shift();
+      redoStack = [];
+      localStorage.setItem("autosave", canvas.toDataURL());
+    };
+
+    const restoreFromLocal = () => {
       const saved = localStorage.getItem("autosave");
       if (saved) {
         const img = new Image();
         img.src = saved;
         img.onload = () => ctx.drawImage(img, 0, 0);
       }
+    };
+
+    // Drawing logic
+    function getCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      if (e.touches) {
+        return {
+          x: e.touches[0].clientX - rect.left,
+          y: e.touches[0].clientY - rect.top,
+        };
+      } else {
+        return {
+          x: e.offsetX,
+          y: e.offsetY
+        };
+      }
     }
 
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    function saveState() {
-      history.push(canvas.toDataURL());
-      redoStack = [];
-      if (history.length > 20) history.shift();
-      localStorage.setItem("autosave", canvas.toDataURL());
+    function startDrawing(x, y) {
+      isDrawing = true;
+      startX = x;
+      startY = y;
+      if (tool.value === 'brush' || tool.value === 'eraser') {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+      }
     }
 
-    function undo() {
-      if (history.length === 0) return;
+    function draw(x, y) {
+      if (!isDrawing) return;
+
+      if (tool.value === 'brush' || tool.value === 'eraser') {
+        ctx.strokeStyle = tool.value === 'eraser' ? getBackgroundColor() : colorPicker.value;
+        ctx.lineWidth = brushSize.value;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
+    }
+
+    function stopDrawing(x, y) {
+      if (!isDrawing) return;
+
+      if (tool.value !== 'brush' && tool.value !== 'eraser') {
+        ctx.beginPath();
+        ctx.strokeStyle = colorPicker.value;
+        ctx.lineWidth = brushSize.value;
+
+        if (fillToggle.checked) {
+          ctx.fillStyle = colorPicker.value;
+        }
+
+        switch (tool.value) {
+          case 'line':
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            break;
+          case 'rect':
+            const w = x - startX, h = y - startY;
+            fillToggle.checked ? ctx.fillRect(startX, startY, w, h) : ctx.strokeRect(startX, startY, w, h);
+            break;
+          case 'circle':
+            const radius = Math.hypot(x - startX, y - startY);
+            ctx.beginPath();
+            ctx.arc(startX, startY, radius, 0, Math.PI * 2);
+            fillToggle.checked ? ctx.fill() : ctx.stroke();
+            break;
+        }
+      }
+
+      ctx.beginPath(); // Reset for brush
+      isDrawing = false;
+      saveState();
+    }
+
+    // Events
+    canvas.addEventListener('mousedown', e => {
+      const { x, y } = getCoords(e);
+      startDrawing(x, y);
+    });
+    canvas.addEventListener('mousemove', e => {
+      const { x, y } = getCoords(e);
+      draw(x, y);
+    });
+    canvas.addEventListener('mouseup', e => {
+      const { x, y } = getCoords(e);
+      stopDrawing(x, y);
+    });
+    canvas.addEventListener('mouseout', () => isDrawing = false);
+
+    // Touch support
+    canvas.addEventListener('touchstart', e => {
+      e.preventDefault();
+      const { x, y } = getCoords(e);
+      startDrawing(x, y);
+    });
+    canvas.addEventListener('touchmove', e => {
+      e.preventDefault();
+      const { x, y } = getCoords(e);
+      draw(x, y);
+    });
+    canvas.addEventListener('touchend', e => {
+      const { x, y } = getCoords(e.changedTouches[0]);
+      stopDrawing(x, y);
+    });
+
+    // Buttons
+    undoBtn.onclick = () => {
+      if (!history.length) return;
       redoStack.push(canvas.toDataURL());
-      const imgData = history.pop();
       const img = new Image();
-      img.src = imgData;
+      img.src = history.pop();
       img.onload = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0);
       };
-    }
+    };
 
-    function redo() {
-      if (redoStack.length === 0) return;
+    redoBtn.onclick = () => {
+      if (!redoStack.length) return;
       const imgData = redoStack.pop();
       history.push(canvas.toDataURL());
       const img = new Image();
@@ -135,110 +258,35 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0);
       };
-    }
+    };
 
-    function startDrawing(x, y) {
-      isDrawing = true;
-      startX = x;
-      startY = y;
-    }
-
-    function draw(e) {
-      if (!isDrawing) return;
-
-      let x = e.offsetX || e.touches?.[0]?.clientX;
-      let y = e.offsetY || e.touches?.[0]?.clientY;
-
-      if (tool.value === "brush" || tool.value === "eraser") {
-        ctx.strokeStyle = tool.value === "eraser" ? "#fff" : colorPicker.value;
-        ctx.lineWidth = brushSize.value;
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
-
-        ctx.lineTo(x, y);
-        ctx.stroke();
-      }
-    }
-
-    function stopDrawing(e) {
-      if (!isDrawing) return;
-
-      ctx.beginPath(); // reset path for brush ----
-
-      if (tool.value !== "brush" && tool.value !== "eraser") {
-        let x = e.offsetX;
-        let y = e.offsetY;
-        ctx.strokeStyle = colorPicker.value;
-        ctx.lineWidth = brushSize.value;
-        ctx.beginPath();
-        switch (tool.value) {
-          case "line":
-            ctx.moveTo(startX, startY);
-            ctx.lineTo(x, y);
-            ctx.stroke();
-            break;
-          case "rect":
-            ctx.strokeRect(startX, startY, x - startX, y - startY);
-            break;
-          case "circle":
-            const radius = Math.hypot(x - startX, y - startY);
-            ctx.arc(startX, startY, radius, 0, Math.PI * 2);
-            ctx.stroke();
-            break;
-        }
-      }
-
-      isDrawing = false;
-      saveState();
-    }
-
-    canvas.addEventListener('mousedown', (e) => {
-      ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
-      startDrawing(e.offsetX, e.offsetY);
-    });
-
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mouseout', () => isDrawing = false);
-
-    // Touch support
-    canvas.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      const touch = e.touches[0];
-      ctx.beginPath();
-      ctx.moveTo(touch.clientX, touch.clientY);
-      startDrawing(touch.clientX, touch.clientY);
-    });
-
-    canvas.addEventListener('touchmove', (e) => {
-      e.preventDefault();
-      const touch = e.touches[0];
-      draw({ offsetX: touch.clientX, offsetY: touch.clientY });
-    });
-
-    canvas.addEventListener('touchend', stopDrawing);
-
-    // Buttons
-    undoBtn.addEventListener('click', undo);
-    redoBtn.addEventListener('click', redo);
-
-    clearBtn.addEventListener('click', () => {
+    clearBtn.onclick = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       history = [];
       redoStack = [];
       localStorage.removeItem("autosave");
-    });
+    };
 
-    saveBtn.addEventListener('click', () => {
+    saveBtn.onclick = () => {
       const link = document.createElement('a');
       link.download = "drawing.png";
       link.href = canvas.toDataURL();
       link.click();
-    });
+    };
 
-    themeBtn.addEventListener('click', () => {
+    themeBtn.onclick = () => {
       document.body.classList.toggle('dark-mode');
+      localStorage.setItem("theme", document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    };
+
+    // Initialization
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('load', () => {
+      resizeCanvas();
+      restoreFromLocal();
+      if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+      }
     });
   </script>
 </body>
