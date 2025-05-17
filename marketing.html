@@ -465,7 +465,7 @@
 
 
             <div class="cart">
-                <a href="">
+                <a href="./cart.html">
                     <i class="fas fa-shopping-cart"></i>
                 </a>
             </div>
@@ -814,11 +814,26 @@
         }
 
         // Add item to cart
-        function addToCart(productName) {
-            cartItemsCount++;
-            updateCartCount();
-            alert(`${productName} added to cart!`);
-        }
+        // Add item to cart with localStorage support
+function addToCart(productName) {
+    const productCard = [...document.querySelectorAll('.card')].find(card =>
+        card.querySelector('h1').textContent === productName
+    );
+
+    const price = productCard.querySelector('h2').textContent;
+    const image = productCard.querySelector('img').src;
+
+    const newItem = { name: productName, price: price, image: image };
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.push(newItem);
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    cartItemsCount++;
+    updateCartCount();
+    alert(`${productName} added to cart!`);
+}
+
 
         // Product buy now functionality
         function buyNow(productName, price) {
@@ -859,6 +874,7 @@
 
         // Initialize cart count
         updateCartCount();
+        
     </script>
 
 
