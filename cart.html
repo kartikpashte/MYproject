@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,112 +12,113 @@
             padding: 20px;
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+    h1 {
+        text-align: center;
+        margin-bottom: 30px;
+    }
 
-        .cart-container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
+    .cart-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
 
-        .cart-item {
-            background-color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
+    .cart-item {
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
 
-        .cart-item img {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            margin-right: 20px;
-        }
+    .cart-item img {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        margin-right: 20px;
+    }
 
-        .item-details {
-            flex: 1;
-        }
+    .item-details {
+        flex: 1;
+    }
 
-        .item-details h2 {
-            font-size: 18px;
-            margin: 0 0 10px 0;
-        }
+    .item-details h2 {
+        font-size: 18px;
+        margin: 0 0 10px 0;
+    }
 
-        .item-details p {
-            color: #007bff;
-            font-weight: bold;
-        }
+    .item-details p {
+        color: #007bff;
+        font-weight: bold;
+    }
 
-        .remove-btn {
-            background-color: #ff4d4d;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
+    .remove-btn {
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background 0.3s;
+    }
 
-        .remove-btn:hover {
-            background-color: #cc0000;
-        }
+    .remove-btn:hover {
+        background-color: #cc0000;
+    }
 
-        .empty-cart {
-            text-align: center;
-            color: gray;
-        }
-    </style>
+    .empty-cart {
+        text-align: center;
+        color: gray;
+    }
+</style>
+
 </head>
 <body>
 
-    <h1>Your Shopping Cart</h1>
-    <div class="cart-container" id="cart-container">
-        <!-- Cart items will appear here -->
-    </div>
+<h1>Your Shopping Cart</h1>
+<div class="cart-container" id="cart-container">
+    <!-- Cart items will appear here -->
+</div>
 
-    <script>
-        const cartContainer = document.getElementById("cart-container");
+<script>
+    const cartContainer = document.getElementById("cart-container");
 
-        function loadCart() {
-            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    function loadCart() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-            if (cart.length === 0) {
-                cartContainer.innerHTML = `<p class="empty-cart">Your cart is empty.</p>`;
-                return;
-            }
-
-            cart.forEach((item, index) => {
-                const itemDiv = document.createElement("div");
-                itemDiv.classList.add("cart-item");
-
-                itemDiv.innerHTML = `
-                    <img src="${item.image}" alt="${item.name}">
-                    <div class="item-details">
-                        <h2>${item.name}</h2>
-                        <p>${item.price}</p>
-                    </div>
-                    <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
-                `;
-
-                cartContainer.appendChild(itemDiv);
-            });
+        if (cart.length === 0) {
+            cartContainer.innerHTML = `<p class="empty-cart">Your cart is empty.</p>`;
+            return;
         }
 
-        function removeItem(index) {
-            let cart = JSON.parse(localStorage.getItem("cart")) || [];
-            cart.splice(index, 1);
-            localStorage.setItem("cart", JSON.stringify(cart));
-            location.reload(); // refresh the page
-        }
+        cart.forEach((item, index) => {
+            const itemDiv = document.createElement("div");
+            itemDiv.classList.add("cart-item");
 
-        loadCart();
-    </script>
+            itemDiv.innerHTML = `
+                <img src="${item.image}" alt="${item.name}">
+                <div class="item-details">
+                    <h2>${item.name}</h2>
+                    <p>${item.price}</p>
+                </div>
+                <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+            `;
+
+            cartContainer.appendChild(itemDiv);
+        });
+    }
+
+    function removeItem(index) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        location.reload(); // refresh the page
+    }
+
+    loadCart();
+</script>
 
 </body>
 </html>
