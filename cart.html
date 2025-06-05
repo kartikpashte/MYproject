@@ -1,123 +1,214 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Cart</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f3f3f3;
-            padding: 20px;
-        }
-
-    h1 {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    .cart-container {
-        max-width: 1000px;
-        margin: 0 auto;
-    }
-
-    .cart-item {
-        background-color: white;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 15px;
-        border-radius: 10px;
-        margin-bottom: 15px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .cart-item img {
-        width: 100px;
-        height: 100px;
-        object-fit: contain;
-        margin-right: 20px;
-    }
-
-    .item-details {
-        flex: 1;
-    }
-
-    .item-details h2 {
-        font-size: 18px;
-        margin: 0 0 10px 0;
-    }
-
-    .item-details p {
-        color: #007bff;
-        font-weight: bold;
-    }
-
-    .remove-btn {
-        background-color: #ff4d4d;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        cursor: pointer;
-        border-radius: 5px;
-        transition: background 0.3s;
-    }
-
-    .remove-btn:hover {
-        background-color: #cc0000;
-    }
-
-    .empty-cart {
-        text-align: center;
-        color: gray;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>My Cart</title>
+<style>
+  :root {
+    --primary-color: #007bff;
+    --danger-color: #ff4d4d;
+    --danger-hover: #cc0000;
+    --font-family: Arial, sans-serif;
+  }
+  body {
+    font-family: var(--font-family);
+    background-color: #f3f3f3;
+    padding: 20px;
+    margin: 0;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .cart-container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .cart-item {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .cart-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-right: 20px;
+  }
+  .item-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .item-details h2 {
+    font-size: 18px;
+    margin: 0;
+  }
+  .item-details .price {
+    color: var(--primary-color);
+    font-weight: bold;
+  }
+  .item-details .quantity-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .quantity-input {
+    width: 50px;
+    padding: 5px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    text-align: center;
+  }
+  .remove-btn {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+  }
+  .remove-btn:hover,
+  .remove-btn:focus {
+    background-color: var(--danger-hover);
+  }
+  .empty-cart {
+    text-align: center;
+    color: gray;
+    font-size: 20px;
+    margin-top: 50px;
+  }
+  .cart-total {
+    max-width: 1000px;
+    margin: 20px auto 0 auto;
+    font-weight: bold;
+    font-size: 20px;
+    text-align: right;
+  }
 </style>
-
 </head>
 <body>
 
 <h1>Your Shopping Cart</h1>
-<div class="cart-container" id="cart-container">
-    <!-- Cart items will appear here -->
+<div class="cart-container" id="cart-container" aria-live="polite" aria-label="Shopping Cart Items">
+  <!-- Cart items will be rendered here -->
 </div>
+<div class="cart-total" id="cart-total" aria-live="polite" aria-atomic="true"></div>
 
 <script>
-    const cartContainer = document.getElementById("cart-container");
+  (() => {
+    const cartContainer = document.getElementById('cart-container');
+    const cartTotal = document.getElementById('cart-total');
 
-    function loadCart() {
-        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const currencyFormatter = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
+    const formatPrice = (price) => currencyFormatter.format(price);
 
-        if (cart.length === 0) {
-            cartContainer.innerHTML = `<p class="empty-cart">Your cart is empty.</p>`;
-            return;
-        }
+    // Get cart with default quantity of 1
+    const getCart = () => {
+      const rawCart = JSON.parse(localStorage.getItem('cart')) || [];
+      return rawCart.map(item => ({
+        ...item,
+        quantity: Math.max(1, parseInt(item.quantity, 10) || 1)
+      }));
+    };
 
-        cart.forEach((item, index) => {
-            const itemDiv = document.createElement("div");
-            itemDiv.classList.add("cart-item");
+    const saveCart = (cart) => localStorage.setItem('cart', JSON.stringify(cart));
 
-            itemDiv.innerHTML = `
-                <img src="${item.image}" alt="${item.name}">
-                <div class="item-details">
-                    <h2>${item.name}</h2>
-                    <p>${item.price}</p>
-                </div>
-                <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
-            `;
+    const renderCart = () => {
+      const cart = getCart();
+      cartContainer.innerHTML = '';
 
-            cartContainer.appendChild(itemDiv);
-        });
-    }
+      if (cart.length === 0) {
+        cartContainer.innerHTML = `<p class="empty-cart">Your cart is empty.</p>`;
+        cartTotal.textContent = '';
+        return;
+      }
 
-    function removeItem(index) {
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      let total = 0;
+
+      cart.forEach(({ image, name, price, quantity }, index) => {
+        const priceNumber = typeof price === 'number' ? price : parseFloat(price.toString().replace(/[^0-9.-]+/g, '')) || 0;
+        const itemTotal = priceNumber * quantity;
+        total += itemTotal;
+
+        const itemDiv = document.createElement('div');
+        itemDiv.classList.add('cart-item');
+        itemDiv.setAttribute('data-index', index);
+        itemDiv.setAttribute('role', 'group');
+        itemDiv.setAttribute('aria-label', `${name}, price: ${formatPrice(priceNumber)}, quantity: ${quantity}`);
+
+        itemDiv.innerHTML = `
+          <img src="${image}" alt="Image of ${name}" />
+          <div class="item-details">
+            <h2>${name}</h2>
+            <div class="price">${formatPrice(priceNumber)}</div>
+            <div class="quantity-container">
+              <label for="quantity-${index}">Qty:</label>
+              <input type="number" id="quantity-${index}" class="quantity-input" min="1" value="${quantity}" aria-live="polite" aria-label="Quantity for ${name}">
+            </div>
+          </div>
+          <button class="remove-btn" aria-label="Remove ${name} from cart">Remove</button>
+        `;
+
+        cartContainer.appendChild(itemDiv);
+      });
+
+      cartTotal.textContent = `Total: ${formatPrice(total)}`;
+    };
+
+    const removeItem = (index) => {
+      const cart = getCart();
+      if (index >= 0 && index < cart.length) {
         cart.splice(index, 1);
-        localStorage.setItem("cart", JSON.stringify(cart));
-        location.reload(); // refresh the page
-    }
+        saveCart(cart);
+        renderCart();
+      }
+    };
 
-    loadCart();
+    const updateQuantity = (index, quantity) => {
+      const cart = getCart();
+      if (index >= 0 && index < cart.length) {
+        quantity = Math.max(1, parseInt(quantity, 10) || 1);
+        cart[index].quantity = quantity;
+        saveCart(cart);
+        renderCart();
+      }
+    };
+
+    cartContainer.addEventListener('click', (event) => {
+      if (event.target.classList.contains('remove-btn')) {
+        const itemDiv = event.target.closest('.cart-item');
+        if (!itemDiv) return;
+        const index = parseInt(itemDiv.getAttribute('data-index'), 10);
+        if (confirm('Are you sure you want to remove this item from the cart?')) {
+          removeItem(index);
+        }
+      }
+    });
+
+    cartContainer.addEventListener('input', (event) => {
+      if (event.target.classList.contains('quantity-input')) {
+        const itemDiv = event.target.closest('.cart-item');
+        if (!itemDiv) return;
+        const index = parseInt(itemDiv.getAttribute('data-index'), 10);
+        const quantity = parseInt(event.target.value, 10);
+        if (!isNaN(quantity) && quantity > 0) {
+          updateQuantity(index, quantity);
+        }
+      }
+    });
+
+    renderCart();
+  })();
 </script>
 
 </body>
