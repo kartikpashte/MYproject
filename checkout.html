@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout</title>
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --light: #f8f9fa;
+      --danger: #dc3545;
+      --font: 'Segoe UI', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--light);
+      padding: 20px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .checkout-container {
+      max-width: 1000px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+
+    .billing-form, .summary {
+      flex: 1 1 45%;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .total {
+      font-weight: bold;
+      font-size: 20px;
+      margin-top: 20px;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+
+    .place-order-btn {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .place-order-btn:hover {
+      background: #084298;
+    }
+
+    .empty-msg {
+      color: gray;
+      text-align: center;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Checkout</h1>
+
+<div class="checkout-container">
+  <div class="billing-form">
+    <h2>Billing Details</h2>
+    <form id="checkout-form">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" required />
+
+      <label for="address">Address</label>
+      <textarea id="address" rows="3" required></textarea>
+
+      <label for="city">City</label>
+      <input type="text" id="city" required />
+
+      <label for="zip">Postal Code</label>
+      <input type="text" id="zip" required />
+
+      <button type="submit" class="place-order-btn">Place Order</button>
+    </form>
+  </div>
+
+  <div class="summary">
+    <h2>Order Summary</h2>
+    <div id="summary-list"></div>
+    <div class="total" id="order-total"></div>
+  </div>
+</div>
+
+<script>
+  const rawCart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+  // Clean and normalize the cart data
+  const cart = rawCart.map(item => {
+    const cleanPrice = parseFloat(item.price?.toString().replace(/[^0-9.]/g, '')) || 0;
+    const quantity = Math.max(1, parseInt(item.quantity, 10) || 1);
+
+    return {
+      name: item.name || 'Unnamed Item',
+      price: cleanPrice,
+      quantity: quantity
+    };
+  });
+
+  const summaryList = document.getElementById('summary-list');
+  const orderTotal = document.getElementById('order-total');
+  const formatter = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
+
+  const renderSummary = () => {
+    summaryList.innerHTML = '';
+
+    if (!cart.length) {
+      summaryList.innerHTML = '<p class="empty-msg">Your cart is empty.</p>';
+      orderTotal.textContent = '';
+      document.getElementById('checkout-form').style.display = 'none';
+      return;
+    }
+
+    let total = 0;
+    cart.forEach(({ name, price, quantity }) => {
+      const subtotal = price * quantity;
+      total += subtotal;
+
+      const item = document.createElement('div');
+      item.className = 'summary-item';
+      item.innerHTML = `
+        <span>${name} (x${quantity})</span>
+        <span>${formatter.format(subtotal)}</span>
+      `;
+      summaryList.appendChild(item);
+    });
+
+    orderTotal.textContent = `Total: ${formatter.format(total)}`;
+  };
+
+  renderSummary();
+
+  document.getElementById('checkout-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const zip = document.getElementById('zip').value.trim();
+
+    if (!name || !email || !address || !city || !zip) {
+      alert('Please fill out all fields.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    alert('✅ Order placed successfully!\nYou will receive a confirmation email.');
+    localStorage.removeItem('cart'); // Clear cart after order
+    window.location.href = 'thankyou.html'; // Optional redirect
+  });
+</script>
+
+</body>
+</html>
