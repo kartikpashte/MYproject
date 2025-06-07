@@ -1,208 +1,323 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Checkout</title>
-  <style>
-    :root {
-      --primary: #0d6efd;
-      --light: #f8f9fa;
-      --danger: #dc3545;
-      --font: 'Segoe UI', sans-serif;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Checkout - Modern Design</title>
+<style>
+  /* Reset & base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f2f5;
+    color: #333;
+    line-height: 1.5;
+  }
+  h1, h2 {
+    font-weight: 700;
+  }
 
-    * {
-      box-sizing: border-box;
-    }
+  /* Container */
+  .container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
 
-    body {
-      margin: 0;
-      font-family: var(--font);
-      background: var(--light);
-      padding: 20px;
-      color: #333;
-    }
+  h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2.5rem;
+    color: #0d6efd;
+  }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+  /* Layout grid */
+  .checkout-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+  }
 
-    .checkout-container {
-      max-width: 1000px;
-      margin: auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
-    }
+  /* Billing form */
+  form.billing-form {
+    flex: 1 1 55%;
+    background: #fff;
+    padding: 30px 35px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgb(13 110 253 / 0.15);
+    position: relative;
+  }
 
-    .billing-form, .summary {
-      flex: 1 1 45%;
-    }
+  /* Floating labels */
+  .form-group {
+    position: relative;
+    margin-bottom: 25px;
+  }
 
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 12px 15px 12px 15px;
+    font-size: 16px;
+    border: 1.8px solid #ccc;
+    border-radius: 8px;
+    background: transparent;
+    transition: border-color 0.3s;
+    outline-offset: 2px;
+  }
 
-    input, textarea, select {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-    }
+  .form-group textarea {
+    resize: vertical;
+  }
 
-    .summary-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
+  .form-group label {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    background: white;
+    padding: 0 6px;
+    color: #6c757d;
+    font-size: 16px;
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
 
-    .total {
-      font-weight: bold;
-      font-size: 20px;
-      margin-top: 20px;
-      border-top: 1px solid #ddd;
-      padding-top: 10px;
-    }
+  /* Float label when input focused or has value */
+  .form-group input:focus + label,
+  .form-group input:not(:placeholder-shown) + label,
+  .form-group textarea:focus + label,
+  .form-group textarea:not(:placeholder-shown) + label {
+    top: -10px;
+    font-size: 13px;
+    color: #0d6efd;
+  }
 
-    .place-order-btn {
-      width: 100%;
-      padding: 15px;
-      font-size: 18px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
+  .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 6px rgb(13 110 253 / 0.35);
+  }
 
-    .place-order-btn:hover {
-      background: #084298;
-    }
+  /* Submit button */
+  button.place-order-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    background: #0d6efd;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgb(13 110 253 / 0.4);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
 
-    .empty-msg {
-      color: gray;
-      text-align: center;
-      font-size: 18px;
+  button.place-order-btn:hover,
+  button.place-order-btn:focus {
+    background-color: #084298;
+    box-shadow: 0 8px 20px rgb(8 66 152 / 0.6);
+    outline: none;
+  }
+
+  /* Order summary */
+  .order-summary {
+    flex: 1 1 40%;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgb(0 0 0 / 0.08);
+    padding: 30px 30px 40px;
+    position: sticky;
+    top: 40px;
+    height: fit-content;
+  }
+
+  .order-summary h2 {
+    margin-bottom: 25px;
+    color: #0d6efd;
+  }
+
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-weight: 600;
+    font-size: 17px;
+  }
+
+  /* Optional: product image in summary */
+  .summary-item span:first-child {
+    max-width: 75%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .total-amount {
+    margin-top: 30px;
+    border-top: 2px solid #ddd;
+    padding-top: 18px;
+    font-weight: 800;
+    font-size: 22px;
+    color: #212529;
+  }
+
+  /* Empty cart message */
+  .empty-msg {
+    text-align: center;
+    color: #999;
+    font-size: 18px;
+    padding: 40px 0;
+    font-style: italic;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .checkout-wrapper {
+      flex-direction: column;
     }
-  </style>
+    .order-summary {
+      position: relative;
+      top: auto;
+    }
+  }
+</style>
 </head>
 <body>
 
-<h1>Checkout</h1>
+<div class="container">
+  <h1>Checkout</h1>
 
-<div class="checkout-container">
-  <div class="billing-form">
-    <h2>Billing Details</h2>
-    <form id="checkout-form">
-      <label for="name">Full Name</label>
-      <input type="text" id="name" required />
+  <div class="checkout-wrapper">
 
-      <label for="email">Email</label>
-      <input type="email" id="email" required />
+    <!-- Billing Form -->
+    <form id="checkout-form" class="billing-form" novalidate aria-label="Billing Details">
+      <div class="form-group">
+        <input type="text" id="name" placeholder=" " required aria-required="true" aria-describedby="nameHelp" />
+        <label for="name">Full Name</label>
+      </div>
 
-      <label for="address">Address</label>
-      <textarea id="address" rows="3" required></textarea>
+      <div class="form-group">
+        <input type="email" id="email" placeholder=" " required aria-required="true" aria-describedby="emailHelp" />
+        <label for="email">Email Address</label>
+      </div>
 
-      <label for="city">City</label>
-      <input type="text" id="city" required />
+      <div class="form-group">
+        <textarea id="address" placeholder=" " rows="3" required aria-required="true" aria-describedby="addressHelp"></textarea>
+        <label for="address">Address</label>
+      </div>
 
-      <label for="zip">Postal Code</label>
-      <input type="text" id="zip" required />
+      <div class="form-group">
+        <input type="text" id="city" placeholder=" " required aria-required="true" aria-describedby="cityHelp" />
+        <label for="city">City</label>
+      </div>
 
-      <button type="submit" class="place-order-btn">Place Order</button>
+      <div class="form-group">
+        <input type="text" id="zip" placeholder=" " required aria-required="true" aria-describedby="zipHelp" />
+        <label for="zip">Postal Code</label>
+      </div>
+
+      <button type="submit" class="place-order-btn" aria-label="Place your order">Place Order</button>
     </form>
-  </div>
 
-  <div class="summary">
-    <h2>Order Summary</h2>
-    <div id="summary-list"></div>
-    <div class="total" id="order-total"></div>
+    <!-- Order Summary -->
+    <aside class="order-summary" aria-label="Order Summary">
+      <h2>Your Order</h2>
+      <div id="summary-list" role="list"></div>
+      <div id="order-total" class="total-amount" aria-live="polite"></div>
+    </aside>
+
   </div>
 </div>
 
 <script>
-  const rawCart = JSON.parse(localStorage.getItem('cart') || '[]');
+  (() => {
+    // Grab and sanitize cart from localStorage
+    const rawCart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-  // Clean and normalize the cart data
-  const cart = rawCart.map(item => {
-    const cleanPrice = parseFloat(item.price?.toString().replace(/[^0-9.]/g, '')) || 0;
-    const quantity = Math.max(1, parseInt(item.quantity, 10) || 1);
-
-    return {
-      name: item.name || 'Unnamed Item',
-      price: cleanPrice,
-      quantity: quantity
-    };
-  });
-
-  const summaryList = document.getElementById('summary-list');
-  const orderTotal = document.getElementById('order-total');
-  const formatter = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
-
-  const renderSummary = () => {
-    summaryList.innerHTML = '';
-
-    if (!cart.length) {
-      summaryList.innerHTML = '<p class="empty-msg">Your cart is empty.</p>';
-      orderTotal.textContent = '';
-      document.getElementById('checkout-form').style.display = 'none';
-      return;
-    }
-
-    let total = 0;
-    cart.forEach(({ name, price, quantity }) => {
-      const subtotal = price * quantity;
-      total += subtotal;
-
-      const item = document.createElement('div');
-      item.className = 'summary-item';
-      item.innerHTML = `
-        <span>${name} (x${quantity})</span>
-        <span>${formatter.format(subtotal)}</span>
-      `;
-      summaryList.appendChild(item);
+    const cart = rawCart.map(item => {
+      const cleanPrice = parseFloat(item.price?.toString().replace(/[^0-9.]/g, '')) || 0;
+      const quantity = Math.max(1, parseInt(item.quantity, 10) || 1);
+      return {
+        name: item.name || 'Unnamed Item',
+        price: cleanPrice,
+        quantity: quantity
+      };
     });
 
-    orderTotal.textContent = `Total: ${formatter.format(total)}`;
-  };
+    const summaryList = document.getElementById('summary-list');
+    const orderTotal = document.getElementById('order-total');
+    const formatter = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
 
-  renderSummary();
+    function renderSummary() {
+      summaryList.innerHTML = '';
+      orderTotal.textContent = '';
 
-  document.getElementById('checkout-form').addEventListener('submit', function (e) {
-    e.preventDefault();
+      if (!cart.length) {
+        summaryList.innerHTML = '<p class="empty-msg">Your cart is empty.</p>';
+        document.getElementById('checkout-form').style.display = 'none';
+        return;
+      }
 
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const address = document.getElementById('address').value.trim();
-    const city = document.getElementById('city').value.trim();
-    const zip = document.getElementById('zip').value.trim();
+      document.getElementById('checkout-form').style.display = 'block';
 
-    if (!name || !email || !address || !city || !zip) {
-      alert('Please fill out all fields.');
-      return;
+      let total = 0;
+      cart.forEach(({ name, price, quantity }) => {
+        const subtotal = price * quantity;
+        total += subtotal;
+
+        const item = document.createElement('div');
+        item.className = 'summary-item';
+        item.setAttribute('role', 'listitem');
+        item.innerHTML = `
+          <span>${name} (x${quantity})</span>
+          <span>${formatter.format(subtotal)}</span>
+        `;
+        summaryList.appendChild(item);
+      });
+
+      orderTotal.textContent = `Total: ${formatter.format(total)}`;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      alert('Please enter a valid email address.');
-      return;
-    }
+    renderSummary();
 
-    alert('✅ Order placed successfully!\nYou will receive a confirmation email.');
-    localStorage.removeItem('cart'); // Clear cart after order
-    window.location.href = 'thankyou.html'; // Optional redirect
-  });
+    // Form validation & submission
+    const form = document.getElementById('checkout-form');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const address = form.address.value.trim();
+      const city = form.city.value.trim();
+      const zip = form.zip.value.trim();
+
+      // Simple validation
+      if (!name || !email || !address || !city || !zip) {
+        alert('Please fill out all fields.');
+        return;
+      }
+
+      // Email regex validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      // Simulate order submission
+      alert('✅ Order placed successfully!\nYou will receive a confirmation email.');
+
+      // Clear cart & redirect
+      localStorage.removeItem('cart');
+      window.location.href = 'thankyou.html';
+    });
+  })();
 </script>
 
 </body>
