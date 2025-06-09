@@ -39,6 +39,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 30px;
+    /* overflow-x: auto;  Optional: horizontal scroll on very small screens */
   }
 
   /* Billing form */
@@ -49,6 +50,7 @@
     border-radius: 12px;
     box-shadow: 0 8px 25px rgb(13 110 253 / 0.15);
     position: relative;
+    min-width: 300px; /* prevents it from getting too narrow */
   }
 
   /* Floating labels */
@@ -134,6 +136,7 @@
     position: sticky;
     top: 40px;
     height: fit-content;
+    min-width: 250px; /* prevents it from getting too narrow */
   }
 
   .order-summary h2 {
@@ -175,16 +178,7 @@
     font-style: italic;
   }
 
-  /* Responsive */
-  @media (max-width: 900px) {
-    .checkout-wrapper {
-      flex-direction: column;
-    }
-    .order-summary {
-      position: relative;
-      top: auto;
-    }
-  }
+  /* Removed the media query that stacked the layout vertically on small screens */
 </style>
 </head>
 <body>
