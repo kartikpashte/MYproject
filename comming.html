@@ -1,109 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coming Soon - Shop Soon</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f0f4f8;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
-            overflow: hidden;
-            background: linear-gradient(135deg, #ffb6b6, #a8c0ff);
-            animation: gradientMove 6s infinite linear;
-        }
-        @keyframes gradientMove {
-            0% {
-                background: linear-gradient(135deg, #ffb6b6, #a8c0ff);
-            }
-            50% {
-                background: linear-gradient(135deg, #a8c0ff, #ffb6b6);
-            }
-            100% {
-                background: linear-gradient(135deg, #ffb6b6, #a8c0ff);
-            }
-        }
-        h1 {
-            font-size: 70px;
-            color: #2c3e50;
-            text-align: center;
-            animation: slideIn 2s ease-out forwards;
-            opacity: 0;
-            letter-spacing: 2px;
-            text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
-        }
-        p {
-            font-size: 18px;
-            color: #34495e;
-            margin-bottom: 30px;
-        }
-        .cta-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #27ae60;
-            color: #fff;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 18px;
-        }
-        .cta-button:hover {
-            background-color: #2980b9;
-        }
-        .product-image {
-            width: 300px;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-        }
-        @keyframes slideIn {
-            0% {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            100% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        @media (max-width: 1024px) {
-            h1 {
-                font-size: 60px;
-            }
-        }
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 50px;
-            }
-        }
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 40px;
-            }
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Coming Soon - New Product Launch</title>
+<style>
+  /* Reset */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #ffd9cc 0%, #ff6f61 100%); /* peach to coral */
+    color: #1c2541; /* navy blue */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .coming-soon-container {
+    background: rgba(255 255 255 / 0.92);
+    backdrop-filter: saturate(180%) blur(15px);
+    border-radius: 20px;
+    padding: 50px 60px;
+    max-width: 600px;
+    box-shadow: 0 20px 50px rgba(255, 111, 97, 0.3); /* coral shadow */
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    text-shadow: 1px 1px 4px rgba(28, 37, 65, 0.3); /* navy shadow */
+  }
+
+  p.lead {
+    font-size: 1.25rem;
+    margin-bottom: 40px;
+    color: #3b3f66; /* darker navy */
+  }
+
+  .countdown {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 40px;
+    font-weight: 700;
+    font-size: 2.25rem;
+    color: #1c2541; /* navy blue */
+    text-shadow: 1px 1px 4px rgba(28, 37, 65, 0.4);
+  }
+
+  .countdown div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .countdown div span.label {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 6px;
+    color: #6c7b8b; /* muted navy */
+  }
+
+  form.notify-form {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .form-group {
+    position: relative;
+    margin-bottom: 30px;
+  }
+
+  input[type="email"] {
+    width: 100%;
+    padding: 16px 18px;
+    font-size: 1.1rem;
+    border: 2px solid #ddd;
+    border-radius: 15px;
+    background: #fff5f3;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    outline-offset: 3px;
+    font-weight: 500;
+    color: #1c2541;
+  }
+
+  input[type="email"]:focus {
+    border-color: #ff6f61;
+    box-shadow: 0 0 10px rgba(255, 111, 97, 0.35);
+    background: #fff;
+  }
+
+  button.notify-btn {
+    width: 100%;
+    padding: 18px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 15px;
+    background: linear-gradient(90deg, #ff6f61, #ff856f);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(255, 111, 97, 0.5);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  button.notify-btn:hover,
+  button.notify-btn:focus {
+    background: linear-gradient(90deg, #ff856f, #ff6f61);
+    box-shadow: 0 14px 35px rgba(255, 133, 111, 0.7);
+    outline: none;
+  }
+
+  .message {
+    font-size: 1rem;
+    color: #ff6f61;
+    margin-top: 15px;
+    min-height: 24px;
+    font-weight: 600;
+  }
+</style>
 </head>
 <body>
-    <div>
-        <h1>Coming Soon!</h1>
-        <img src="https://m.media-amazon.com/images/I/31CAoWjbArL._SY300_SX300_QL70_FMwebp_.jpg" alt="Product Image" class="product-image">
-        <img src="https://m.media-amazon.com/images/I/31CAoWjbArL._SY300_SX300_QL70_FMwebp_.jpg" alt="Product Image" class="product-image">
-        <img src="https://m.media-amazon.com/images/I/41WbLjP8s7L._SY300_SX300_QL70_FMwebp_.jpg" alt="Product Image" class="product-image">
 
-        <p>We're getting ready to launch our new collection. Stay tuned for exciting deals and products!</p>
-        <a href="#" class="cta-button">Sign Up for Updates</a>
+<div class="coming-soon-container" role="main" aria-live="polite" aria-atomic="true">
+  <h1>New Product Coming Soon!</h1>
+  <p class="lead">We’re launching something awesome. Stay tuned!</p>
+
+  <div class="countdown" aria-label="Countdown timer to product launch">
+    <div><span id="days">00</span><span class="label">Days</span></div>
+    <div><span id="hours">00</span><span class="label">Hours</span></div>
+    <div><span id="minutes">00</span><span class="label">Minutes</span></div>
+    <div><span id="seconds">00</span><span class="label">Seconds</span></div>
+  </div>
+
+  <form id="notify-form" class="notify-form" aria-label="Email notification signup form">
+    <div class="form-group">
+      <input
+        type="email"
+        id="notify-email"
+        name="email"
+        placeholder="Enter your email"
+        required
+        aria-required="true"
+        aria-describedby="notifyHelp"
+        autocomplete="email"
+      />
     </div>
+    <button type="submit" class="notify-btn" aria-label="Notify me when product launches">Notify Me</button>
+    <div id="notifyHelp" class="message" role="alert" aria-live="assertive"></div>
+  </form>
+</div>
+
+<script>
+(() => {
+  const launchDate = new Date('2025-07-31T12:00:00');
+
+  const daysSpan = document.getElementById('days');
+  const hoursSpan = document.getElementById('hours');
+  const minutesSpan = document.getElementById('minutes');
+  const secondsSpan = document.getElementById('seconds');
+
+  function updateCountdown() {
+    const now = new Date();
+    const diff = launchDate - now;
+
+    if (diff <= 0) {
+      daysSpan.textContent = '00';
+      hoursSpan.textContent = '00';
+      minutesSpan.textContent = '00';
+      secondsSpan.textContent = '00';
+      clearInterval(timerInterval);
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    daysSpan.textContent = String(days).padStart(2, '0');
+    hoursSpan.textContent = String(hours).padStart(2, '0');
+    minutesSpan.textContent = String(minutes).padStart(2, '0');
+    secondsSpan.textContent = String(seconds).padStart(2, '0');
+  }
+
+  const timerInterval = setInterval(updateCountdown, 1000);
+  updateCountdown();
+
+  const form = document.getElementById('notify-form');
+  const emailInput = form.querySelector('input[type="email"]');
+  const messageDiv = document.getElementById('notifyHelp');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    messageDiv.textContent = '';
+
+    const email = emailInput.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email || !emailRegex.test(email)) {
+      messageDiv.textContent = 'Please enter a valid email address.';
+      emailInput.focus();
+      return;
+    }
+
+    messageDiv.textContent = 'Thank you! We will notify you when the product launches.';
+    emailInput.value = '';
+  });
+})();
+</script>
+
 </body>
 </html>

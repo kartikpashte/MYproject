@@ -3,187 +3,232 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Checkout - Modern Design</title>
+<title>Checkout - Modern & Polished Design</title>
 <style>
-  /* Reset & base */
+  /* Reset */
   *, *::before, *::after {
     box-sizing: border-box;
   }
+
   body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f0f2f5;
-    color: #333;
-    line-height: 1.5;
-  }
-  h1, h2 {
-    font-weight: 700;
+    background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+    color: #222;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 15px;
   }
 
-  /* Container */
   .container {
+    background: rgba(255 255 255 / 0.85);
+    backdrop-filter: saturate(180%) blur(15px);
+    border-radius: 20px;
     max-width: 1100px;
-    margin: 40px auto;
-    padding: 0 20px;
+    width: 100%;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    padding: 40px 50px;
   }
 
   h1 {
     text-align: center;
-    margin-bottom: 40px;
-    font-size: 2.5rem;
-    color: #0d6efd;
+    font-size: 3rem;
+    margin-bottom: 50px;
+    color: #1e40af;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    text-shadow: 1px 1px 4px rgb(30 64 175 / 0.3);
   }
 
   /* Layout grid */
   .checkout-wrapper {
     display: flex;
+    gap: 40px;
     flex-wrap: wrap;
-    gap: 30px;
-    /* overflow-x: auto;  Optional: horizontal scroll on very small screens */
   }
 
-  /* Billing form */
+  /* Billing Form */
   form.billing-form {
-    flex: 1 1 55%;
+    flex: 1 1 60%;
     background: #fff;
-    padding: 30px 35px;
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgb(13 110 253 / 0.15);
-    position: relative;
-    min-width: 300px; /* prevents it from getting too narrow */
+    border-radius: 20px;
+    padding: 40px 45px;
+    box-shadow: 0 20px 40px rgb(30 64 175 / 0.2);
+    min-width: 320px;
+    transition: box-shadow 0.3s ease;
+  }
+  form.billing-form:focus-within {
+    box-shadow: 0 25px 55px rgb(30 64 175 / 0.35);
   }
 
-  /* Floating labels */
+  /* Form groups */
   .form-group {
     position: relative;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
   }
 
   .form-group input,
   .form-group textarea {
     width: 100%;
-    padding: 12px 15px 12px 15px;
-    font-size: 16px;
-    border: 1.8px solid #ccc;
-    border-radius: 8px;
-    background: transparent;
-    transition: border-color 0.3s;
-    outline-offset: 2px;
+    padding: 16px 18px 16px 18px;
+    font-size: 1.1rem;
+    border: 2px solid #ddd;
+    border-radius: 15px;
+    background: #fafafa;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    outline-offset: 3px;
+    font-weight: 500;
   }
 
   .form-group textarea {
     resize: vertical;
+    min-height: 80px;
   }
 
+  /* Floating labels */
   .form-group label {
     position: absolute;
+    left: 18px;
     top: 50%;
-    left: 15px;
     transform: translateY(-50%);
-    background: white;
-    padding: 0 6px;
-    color: #6c757d;
-    font-size: 16px;
+    background: #fff;
+    padding: 0 8px;
+    font-size: 1.1rem;
+    color: #888;
     pointer-events: none;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
+    font-weight: 600;
   }
 
-  /* Float label when input focused or has value */
+  /* When input focused or filled */
+  .form-group input:focus,
+  .form-group input:not(:placeholder-shown),
+  .form-group textarea:focus,
+  .form-group textarea:not(:placeholder-shown) {
+    border-color: #1e40af;
+    box-shadow: 0 0 10px rgb(30 64 175 / 0.35);
+  }
   .form-group input:focus + label,
   .form-group input:not(:placeholder-shown) + label,
   .form-group textarea:focus + label,
   .form-group textarea:not(:placeholder-shown) + label {
-    top: -10px;
-    font-size: 13px;
-    color: #0d6efd;
+    top: -12px;
+    font-size: 0.9rem;
+    color: #1e40af;
+    font-weight: 700;
   }
 
-  .form-group input:focus,
-  .form-group textarea:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 6px rgb(13 110 253 / 0.35);
+  /* Inline validation message */
+  .validation-message {
+    color: #e11d48;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    display: none;
+  }
+  .validation-message.active {
+    display: block;
   }
 
-  /* Submit button */
+  /* Place order button */
   button.place-order-btn {
     width: 100%;
-    padding: 16px;
-    font-size: 18px;
-    font-weight: 600;
+    padding: 18px;
+    font-size: 1.25rem;
+    font-weight: 700;
     border: none;
-    border-radius: 10px;
-    background: #0d6efd;
+    border-radius: 15px;
+    background: linear-gradient(90deg, #1e40af, #3b82f6);
     color: white;
     cursor: pointer;
-    box-shadow: 0 5px 15px rgb(13 110 253 / 0.4);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 10px 25px rgb(30 64 175 / 0.5);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
   }
-
   button.place-order-btn:hover,
   button.place-order-btn:focus {
-    background-color: #084298;
-    box-shadow: 0 8px 20px rgb(8 66 152 / 0.6);
+    background: linear-gradient(90deg, #3b82f6, #1e40af);
+    box-shadow: 0 14px 35px rgb(59 130 246 / 0.7);
     outline: none;
   }
 
-  /* Order summary */
+  /* Order Summary */
   .order-summary {
-    flex: 1 1 40%;
+    flex: 1 1 35%;
     background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgb(0 0 0 / 0.08);
-    padding: 30px 30px 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 45px rgb(0 0 0 / 0.12);
+    padding: 35px 30px 45px;
     position: sticky;
     top: 40px;
-    height: fit-content;
-    min-width: 250px; /* prevents it from getting too narrow */
+    min-width: 280px;
+    font-weight: 600;
   }
 
   .order-summary h2 {
-    margin-bottom: 25px;
-    color: #0d6efd;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #1e40af;
+    text-align: center;
+    text-shadow: 0 1px 3px rgb(30 64 175 / 0.4);
   }
 
   .summary-item {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 15px;
-    font-weight: 600;
-    font-size: 17px;
+    margin-bottom: 18px;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 6px;
   }
 
-  /* Optional: product image in summary */
   .summary-item span:first-child {
-    max-width: 75%;
+    max-width: 70%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .total-amount {
-    margin-top: 30px;
-    border-top: 2px solid #ddd;
-    padding-top: 18px;
-    font-weight: 800;
-    font-size: 22px;
-    color: #212529;
+    margin-top: 35px;
+    border-top: 3px solid #1e40af;
+    padding-top: 20px;
+    font-weight: 900;
+    font-size: 2.4rem;
+    color: #111;
+    text-align: right;
   }
 
-  /* Empty cart message */
+  /* Empty cart */
   .empty-msg {
     text-align: center;
-    color: #999;
-    font-size: 18px;
-    padding: 40px 0;
+    color: #888;
     font-style: italic;
+    font-size: 1.25rem;
+    padding: 60px 0;
   }
 
-  /* Removed the media query that stacked the layout vertically on small screens */
+  /* Responsive: stack on small screens */
+  @media (max-width: 900px) {
+    .checkout-wrapper {
+      flex-direction: column;
+    }
+    form.billing-form, .order-summary {
+      flex: 1 1 100%;
+      min-width: auto;
+    }
+    .order-summary {
+      position: relative;
+      top: auto;
+      margin-top: 35px;
+    }
+  }
+
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" role="main">
   <h1>Checkout</h1>
 
   <div class="checkout-wrapper">
@@ -191,28 +236,33 @@
     <!-- Billing Form -->
     <form id="checkout-form" class="billing-form" novalidate aria-label="Billing Details">
       <div class="form-group">
-        <input type="text" id="name" placeholder=" " required aria-required="true" aria-describedby="nameHelp" />
+        <input type="text" id="name" name="name" placeholder=" " required aria-required="true" aria-describedby="nameHelp" autocomplete="name" />
         <label for="name">Full Name</label>
+        <div class="validation-message" id="nameHelp">Please enter your full name.</div>
       </div>
 
       <div class="form-group">
-        <input type="email" id="email" placeholder=" " required aria-required="true" aria-describedby="emailHelp" />
+        <input type="email" id="email" name="email" placeholder=" " required aria-required="true" aria-describedby="emailHelp" autocomplete="email" />
         <label for="email">Email Address</label>
+        <div class="validation-message" id="emailHelp">Please enter a valid email address.</div>
       </div>
 
       <div class="form-group">
-        <textarea id="address" placeholder=" " rows="3" required aria-required="true" aria-describedby="addressHelp"></textarea>
+        <textarea id="address" name="address" placeholder=" " rows="3" required aria-required="true" aria-describedby="addressHelp" autocomplete="street-address"></textarea>
         <label for="address">Address</label>
+        <div class="validation-message" id="addressHelp">Please enter your address.</div>
       </div>
 
       <div class="form-group">
-        <input type="text" id="city" placeholder=" " required aria-required="true" aria-describedby="cityHelp" />
+        <input type="text" id="city" name="city" placeholder=" " required aria-required="true" aria-describedby="cityHelp" autocomplete="address-level2" />
         <label for="city">City</label>
+        <div class="validation-message" id="cityHelp">Please enter your city.</div>
       </div>
 
       <div class="form-group">
-        <input type="text" id="zip" placeholder=" " required aria-required="true" aria-describedby="zipHelp" />
+        <input type="text" id="zip" name="zip" placeholder=" " required aria-required="true" aria-describedby="zipHelp" autocomplete="postal-code" />
         <label for="zip">Postal Code</label>
+        <div class="validation-message" id="zipHelp">Please enter your postal code.</div>
       </div>
 
       <button type="submit" class="place-order-btn" aria-label="Place your order">Place Order</button>
@@ -221,7 +271,7 @@
     <!-- Order Summary -->
     <aside class="order-summary" aria-label="Order Summary">
       <h2>Your Order</h2>
-      <div id="summary-list" role="list"></div>
+      <div id="summary-list" role="list" tabindex="0" aria-live="polite" aria-atomic="true"></div>
       <div id="order-total" class="total-amount" aria-live="polite"></div>
     </aside>
 
@@ -229,89 +279,121 @@
 </div>
 
 <script>
-  (() => {
-    // Grab and sanitize cart from localStorage
-    const rawCart = JSON.parse(localStorage.getItem('cart') || '[]');
+(() => {
+  // Grab and sanitize cart from localStorage
+  const rawCart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-    const cart = rawCart.map(item => {
-      const cleanPrice = parseFloat(item.price?.toString().replace(/[^0-9.]/g, '')) || 0;
-      const quantity = Math.max(1, parseInt(item.quantity, 10) || 1);
-      return {
-        name: item.name || 'Unnamed Item',
-        price: cleanPrice,
-        quantity: quantity
-      };
-    });
+  const cart = rawCart.map(item => {
+    const cleanPrice = parseFloat(item.price?.toString().replace(/[^0-9.]/g, '')) || 0;
+    const quantity = Math.max(1, parseInt(item.quantity, 10) || 1);
+    return {
+      name: item.name || 'Unnamed Item',
+      price: cleanPrice,
+      quantity: quantity
+    };
+  });
 
-    const summaryList = document.getElementById('summary-list');
-    const orderTotal = document.getElementById('order-total');
-    const formatter = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
+  const summaryList = document.getElementById('summary-list');
+  const orderTotal = document.getElementById('order-total');
+  const form = document.getElementById('checkout-form');
 
-    function renderSummary() {
-      summaryList.innerHTML = '';
-      orderTotal.textContent = '';
+  const formatter = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
 
-      if (!cart.length) {
-        summaryList.innerHTML = '<p class="empty-msg">Your cart is empty.</p>';
-        document.getElementById('checkout-form').style.display = 'none';
-        return;
-      }
+  function renderSummary() {
+    summaryList.innerHTML = '';
+    orderTotal.textContent = '';
 
-      document.getElementById('checkout-form').style.display = 'block';
-
-      let total = 0;
-      cart.forEach(({ name, price, quantity }) => {
-        const subtotal = price * quantity;
-        total += subtotal;
-
-        const item = document.createElement('div');
-        item.className = 'summary-item';
-        item.setAttribute('role', 'listitem');
-        item.innerHTML = `
-          <span>${name} (x${quantity})</span>
-          <span>${formatter.format(subtotal)}</span>
-        `;
-        summaryList.appendChild(item);
-      });
-
-      orderTotal.textContent = `Total: ${formatter.format(total)}`;
+    if (!cart.length) {
+      summaryList.innerHTML = '<p class="empty-msg">Your cart is empty.</p>';
+      form.style.display = 'none';
+      return;
     }
 
-    renderSummary();
+    form.style.display = 'block';
 
-    // Form validation & submission
-    const form = document.getElementById('checkout-form');
+    let total = 0;
+    cart.forEach(({ name, price, quantity }) => {
+      const subtotal = price * quantity;
+      total += subtotal;
 
-    form.addEventListener('submit', e => {
-      e.preventDefault();
+      const item = document.createElement('div');
+      item.className = 'summary-item';
+      item.setAttribute('role', 'listitem');
+      item.textContent = `${name} (x${quantity})`;
 
-      const name = form.name.value.trim();
-      const email = form.email.value.trim();
-      const address = form.address.value.trim();
-      const city = form.city.value.trim();
-      const zip = form.zip.value.trim();
+      const priceSpan = document.createElement('span');
+      priceSpan.textContent = formatter.format(subtotal);
 
-      // Simple validation
-      if (!name || !email || !address || !city || !zip) {
-        alert('Please fill out all fields.');
-        return;
-      }
-
-      // Email regex validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address.');
-        return;
-      }
-
-      // Simulate order submission
-      alert('✅ Order placed successfully!\nYou will receive a confirmation email.');
-
-      // Clear cart & redirect
-      localStorage.removeItem('cart');
-      window.location.href = 'thankyou.html';
+      item.appendChild(priceSpan);
+      summaryList.appendChild(item);
     });
-  })();
+
+    orderTotal.textContent = `Total: ${formatter.format(total)}`;
+  }
+
+  renderSummary();
+
+  // Form validation & submission with inline errors
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+
+    let valid = true;
+
+    // Clear previous error messages
+    form.querySelectorAll('.validation-message').forEach(msg => {
+      msg.classList.remove('active');
+    });
+
+    // Validation rules
+    const name = form.name.value.trim();
+    if (!name) {
+      document.getElementById('nameHelp').classList.add('active');
+      valid = false;
+    }
+
+    const email = form.email.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      document.getElementById('emailHelp').classList.add('active');
+      valid = false;
+    }
+
+    const address = form.address.value.trim();
+    if (!address) {
+      document.getElementById('addressHelp').classList.add('active');
+      valid = false;
+    }
+
+    const city = form.city.value.trim();
+    if (!city) {
+      document.getElementById('cityHelp').classList.add('active');
+      valid = false;
+    }
+
+    const zip = form.zip.value.trim();
+    if (!zip) {
+      document.getElementById('zipHelp').classList.add('active');
+      valid = false;
+    }
+
+    if (!valid) {
+      // Focus on first invalid input
+      const firstError = form.querySelector('.validation-message.active');
+      if (firstError) {
+        const inputId = firstError.id.replace('Help', '');
+        form[inputId].focus();
+      }
+      return;
+    }
+
+    // Simulate order submission
+    alert('✅ Order placed successfully!\nYou will receive a confirmation email.');
+
+    // Clear cart & redirect
+    localStorage.removeItem('cart');
+    window.location.href = 'try.html';
+  });
+})();
 </script>
 
 </body>
