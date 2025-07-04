@@ -1,306 +1,259 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rock Paper Scissors Game</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rock Paper Scissors - Upgraded</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            color: #fff;
-            overflow: hidden;
-        }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, #141e30, #243b55);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
 
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    }
 
-        .score-board {
-            font-size: 1.4rem;
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-            gap: 50px;
-        }
+    .scoreboard {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      max-width: 500px;
+      font-size: 1.4rem;
+      margin: 20px 0;
+    }
 
-        .score-board span {
-            font-weight: bold;
-        }
+    .choices {
+      display: flex;
+      gap: 30px;
+      margin: 30px 0;
+    }
 
-        .wrapper {
-            display: flex;
-            justify-content: center;
-            gap: 60px;
-            margin-top: 40px;
-        }
+    .btn {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.3s;
+      position: relative;
+    }
 
-        .btn {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #fff;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease, background-color 0.3s ease;
-        }
+    .btn:hover {
+      transform: scale(1.1);
+    }
 
-        .btn img {
-            width: 80%;
-            height: 80%;
-        }
+    .btn img {
+      width: 60%;
+    }
 
-        .btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            background-color: rgba(255, 255, 255, 0.2);
-        }
+    .result {
+      font-size: 1.8rem;
+      margin: 20px;
+      min-height: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
 
-        .btn:active {
-            transform: scale(0.95);
-        }
+    .highlight {
+      animation: pulse 0.5s;
+    }
 
-        #result {
-            font-size: 1.8rem;
-            margin-top: 20px;
-            text-align: center;
-            padding: 10px;
-            border-radius: 10px;
-            background-color: rgba(0, 0, 0, 0.5);
-            width: 80%;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-        }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
 
-        .new-game-btn {
-            background-color: #ff7e5f;
-            color: white;
-            padding: 12px 25px;
-            font-size: 1.5rem;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 30px;
-        }
+    button.new-game {
+      padding: 10px 25px;
+      font-size: 1.2rem;
+      margin-top: 20px;
+      cursor: pointer;
+      background: #ff7e5f;
+      border: none;
+      color: white;
+      border-radius: 10px;
+    }
 
-        .new-game-btn:hover {
-            background-color: #feb47b;
-        }
+    button.new-game:hover {
+      background: #feb47b;
+    }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.3s ease;
-        }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+    }
 
-        .modal-content {
-            background: #222;
-            color: #fff;
-            border-radius: 8px;
-            padding: 20px;
-            width: 400px;
-            text-align: center;
-            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.7);
-        }
+    .modal-content {
+      background: #222;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 400px;
+      color: #fff;
+    }
 
-        .modal-content h2 {
-            font-size: 2rem;
-        }
+    .modal-content h2 {
+      margin-bottom: 20px;
+    }
 
-        .modal-content button {
-            background-color: #ff7e5f;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2rem;
-            margin-top: 20px;
-        }
+    .modal-content button {
+      background: #ff7e5f;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
 
-        .modal-content button:hover {
-            background-color: #feb47b;
-        }
-
-        @media (max-width: 600px) {
-            .wrapper {
-                flex-direction: column;
-                gap: 30px;
-            }
-
-            .score-board {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            h1 {
-                font-size: 2.5rem;
-            }
-        }
-    </style>
+    .modal-content button:hover {
+      background: #feb47b;
+    }
+  </style>
 </head>
 <body>
-    <h1>Rock Paper Scissors Game</h1>
-    <div class="score-board">
-        <span id="player-score">Player: 0</span>
-        <span id="computer-score">Computer: 0</span>
+  <h1>Rock Paper Scissors</h1>
+  <div class="scoreboard">
+    <div id="player-score">👤 Player: 0</div>
+    <div id="computer-score">💻 Computer: 0</div>
+  </div>
+
+  <div class="choices">
+    <div class="btn" data-choice="Rock"><img src="https://img.icons8.com/emoji/96/rock-emoji.png"/></div>
+    <div class="btn" data-choice="Paper"><img src="https://img.icons8.com/emoji/96/raised-back-of-hand-emoji.png"/></div>
+    <div class="btn" data-choice="Scissors"><img src="https://img.icons8.com/emoji/96/victory-hand-emoji.png"/></div>
+  </div>
+
+  <div class="result" id="result"></div>
+  <button class="new-game" onclick="game.reset()">New Game</button>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h2 id="modal-title">Game Over</h2>
+      <p id="modal-msg">You win!</p>
+      <button onclick="game.reset(true)">Play Again</button>
     </div>
+  </div>
 
-    <div class="wrapper">
-        <div onclick="playedRock()" class="btn" id="btn-rock">
-            <img src="https://github.com/omkore/JS/blob/main/Projects/Project_01_Rock_Paper_Scissor/images/fist.png?raw=true" alt="Rock">
-        </div>
-        <div onclick="playedPaper()" class="btn" id="btn-paper">
-            <img src="https://github.com/omkore/JS/blob/main/Projects/Project_01_Rock_Paper_Scissor/images/hand-paper.png?raw=true" alt="Paper">
-        </div>
-        <div onclick="playedScissor()" class="btn" id="btn-scissors">
-            <img src="https://github.com/omkore/JS/blob/main/Projects/Project_01_Rock_Paper_Scissor/images/scissors.png?raw=true" alt="Scissors">
-        </div>
-    </div>
+  <script>
+    class RPSGame {
+      constructor() {
+        this.playerScore = 0;
+        this.computerScore = 0;
+        this.winningScore = 5;
+        this.round = 1;
+        this.gameOver = false;
 
-    <div id="result"></div>
-    <button class="new-game-btn" onclick="newGame()">New Game</button>
+        this.playerScoreEl = document.getElementById('player-score');
+        this.computerScoreEl = document.getElementById('computer-score');
+        this.resultEl = document.getElementById('result');
+        this.modal = document.getElementById('modal');
+        this.modalMsg = document.getElementById('modal-msg');
 
-    <!-- Modal for Game Over -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <h2>Game Over</h2>
-            <p id="modal-message">You win!</p>
-            <button onclick="closeModal()">Play Again</button>
-        </div>
-    </div>
+        this.choices = ['Rock', 'Paper', 'Scissors'];
+        document.querySelectorAll('.btn').forEach(btn =>
+          btn.addEventListener('click', (e) => this.playRound(e.currentTarget.dataset.choice))
+        );
+      }
 
-    <script>
-        let playerScore = 0;
-        let computerScore = 0;
-        const winningScore = 5;
-        let roundNumber = 1;
+      getComputerChoice = () => {
+        const index = Math.floor(Math.random() * 3);
+        return this.choices[index];
+      };
 
-        function playComputer() {
-            const randomNum = Math.random();
-            if (randomNum < 0.33) return "Rock";
-            if (randomNum < 0.66) return "Paper";
-            return "Scissors";
+      playRound(playerChoice) {
+        if (this.gameOver) return;
+
+        const computerChoice = this.getComputerChoice();
+        let winner = '';
+
+        if (playerChoice === computerChoice) {
+          winner = 'tie';
+        } else if (
+          (playerChoice === 'Rock' && computerChoice === 'Scissors') ||
+          (playerChoice === 'Paper' && computerChoice === 'Rock') ||
+          (playerChoice === 'Scissors' && computerChoice === 'Paper')
+        ) {
+          winner = 'player';
+          this.playerScore++;
+        } else {
+          winner = 'computer';
+          this.computerScore++;
         }
 
-        function updateScores() {
-            document.getElementById('player-score').textContent = `Player: ${playerScore}`;
-            document.getElementById('computer-score').textContent = `Computer: ${computerScore}`;
+        this.displayResult(playerChoice, computerChoice, winner);
+        this.updateScores();
+        this.checkEndGame();
+      }
+
+      displayResult(player, computer, winner) {
+        let message = '';
+        if (winner === 'tie') {
+          message = `🟡 Round ${this.round}: It's a tie! You both chose ${player}.`;
+        } else if (winner === 'player') {
+          message = `✅ Round ${this.round}: You win! ${player} beats ${computer}.`;
+        } else {
+          message = `❌ Round ${this.round}: You lose! ${computer} beats ${player}.`;
         }
 
-        function showResult(playerChoice, computerChoice, winner) {
-            const resultDiv = document.getElementById('result');
-            if (winner === 'tie') {
-                resultDiv.textContent = `Round ${roundNumber}: It's a tie! You both chose ${playerChoice}.`;
-            } else if (winner === 'player') {
-                resultDiv.textContent = `Round ${roundNumber}: You win! ${playerChoice} beats ${computerChoice}.`;
-            } else {
-                resultDiv.textContent = `Round ${roundNumber}: You lose! ${computerChoice} beats ${playerChoice}.`;
-            }
-            roundNumber++;
-        }
+        this.resultEl.textContent = message;
+        this.resultEl.classList.add('highlight');
+        setTimeout(() => this.resultEl.classList.remove('highlight'), 300);
+        this.round++;
+      }
 
-        function playedRock() {
-            const computerChoice = playComputer();
-            if (computerChoice === "Rock") {
-                showResult("Rock", computerChoice, "tie");
-            } else if (computerChoice === "Paper") {
-                showResult("Rock", computerChoice, "computer");
-                computerScore++;
-            } else {
-                showResult("Rock", computerChoice, "player");
-                playerScore++;
-            }
-            updateScores();
-            checkWinner();
-        }
+      updateScores() {
+        this.playerScoreEl.textContent = `👤 Player: ${this.playerScore}`;
+        this.computerScoreEl.textContent = `💻 Computer: ${this.computerScore}`;
+      }
 
-        function playedPaper() {
-            const computerChoice = playComputer();
-            if (computerChoice === "Paper") {
-                showResult("Paper", computerChoice, "tie");
-            } else if (computerChoice === "Rock") {
-                showResult("Paper", computerChoice, "player");
-                playerScore++;
-            } else {
-                showResult("Paper", computerChoice, "computer");
-                computerScore++;
-            }
-            updateScores();
-            checkWinner();
+      checkEndGame() {
+        if (this.playerScore >= this.winningScore || this.computerScore >= this.winningScore) {
+          this.gameOver = true;
+          this.modalMsg.textContent = this.playerScore > this.computerScore ? '🎉 You win the game!' : '😞 Computer wins the game!';
+          this.modal.style.display = 'flex';
         }
+      }
 
-        function playedScissor() {
-            const computerChoice = playComputer();
-            if (computerChoice === "Scissors") {
-                showResult("Scissors", computerChoice, "tie");
-            } else if (computerChoice === "Rock") {
-                showResult("Scissors", computerChoice, "computer");
-                computerScore++;
-            } else {
-                showResult("Scissors", computerChoice, "player");
-                playerScore++;
-            }
-            updateScores();
-            checkWinner();
+      reset(fromModal = false) {
+        this.playerScore = 0;
+        this.computerScore = 0;
+        this.round = 1;
+        this.gameOver = false;
+        this.resultEl.textContent = '';
+        this.updateScores();
+        if (fromModal) {
+          this.modal.style.display = 'none';
         }
+      }
+    }
 
-        function checkWinner() {
-            if (playerScore >= winningScore) {
-                showModal('You win!');
-            } else if (computerScore >= winningScore) {
-                showModal('Computer wins!');
-            }
-        }
-
-        function showModal(message) {
-            const modal = document.getElementById('modal');
-            const modalMessage = document.getElementById('modal-message');
-            modalMessage.textContent = message;
-            modal.style.display = 'flex';
-            modal.style.opacity = '1';
-        }
-
-        function closeModal() {
-            playerScore = 0;
-            computerScore = 0;
-            updateScores();
-            roundNumber = 1;
-            document.getElementById('result').textContent = '';
-            const modal = document.getElementById('modal');
-            modal.style.display = 'none';
-        }
-
-        function newGame() {
-            playerScore = 0;
-            computerScore = 0;
-            updateScores();
-            roundNumber = 1;
-            document.getElementById('result').textContent = '';
-        }
-    </script>
+    const game = new RPSGame();
+  </script>
 </body>
 </html>
