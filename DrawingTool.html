@@ -1,293 +1,530 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Advanced Drawing Tool</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f0f0f0;
-      transition: background 0.3s;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Advanced Drawing Tool - Upgraded</title>
+<style>
+  :root {
+    --bg-light: #f0f0f0;
+    --bg-dark: #121212;
+    --toolbar-bg-light: #ffffffcc;
+    --toolbar-bg-dark: #222222cc;
+    --text-light: #000;
+    --text-dark: #fff;
+    --transition-speed: 0.3s;
+  }
 
-    .dark-mode {
-      background-color: #121212;
-      color: #fff;
-    }
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-light);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+  }
 
+  body.dark-mode {
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
+  }
+
+  .toolbar {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--toolbar-bg-light);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    z-index: 1000;
+    backdrop-filter: blur(6px);
+    overflow-x: auto;
+    max-width: 90vw;
+    transition: background var(--transition-speed), color var(--transition-speed);
+  }
+
+  body.dark-mode .toolbar {
+    background: var(--toolbar-bg-dark);
+    color: var(--text-dark);
+  }
+
+  button, select, input[type="range"], input[type="color"], label {
+    font-size: 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  input[type="range"] {
+    vertical-align: middle;
+    width: 120px;
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    cursor: crosshair;
+    touch-action: none; /* disable default touch actions */
+  }
+
+  body.dark-mode #cursorPreview {
+    border-color: var(--text-dark);
+    background: rgba(0 0 0 / 0.3);
+  }
+
+  /* Toolbar toggle button */
+  #toggleToolbarBtn {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: var(--toolbar-bg-light);
+    border: none;
+    border-radius: 50%;
+    width: 40px; height: 40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: background var(--transition-speed);
+    z-index: 1100;
+  }
+
+  body.dark-mode #toggleToolbarBtn {
+    background: var(--toolbar-bg-dark);
+  }
+
+  @media (max-width: 500px) {
     .toolbar {
-      position: fixed;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #ffffffcc;
-      border-radius: 10px;
-      padding: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      z-index: 1000;
-      backdrop-filter: blur(5px);
-      overflow-x: auto;
+      max-width: 95vw;
+      padding: 8px 10px;
+      gap: 8px;
     }
 
-    .dark-mode .toolbar {
-      background: #222222cc;
-      color: white;
+    input[type="range"] {
+      width: 90px;
     }
-
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      cursor: crosshair;
-    }
-
-    button, select, input[type="range"], input[type="checkbox"] {
-      padding: 5px 8px;
-      font-size: 14px;
-    }
-
-    label {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <div class="toolbar">
-    <input type="color" id="colorPicker" />
-    <input type="range" id="brushSize" min="1" max="50" value="5" />
 
-    <select id="tool">
-      <option value="brush">Brush</option>
-      <option value="eraser">Eraser</option>
-      <option value="line">Line</option>
-      <option value="rect">Rectangle</option>
-      <option value="circle">Circle</option>
-    </select>
+<div class="toolbar" id="toolbar">
+  <input type="color" id="colorPicker" title="Pick Color" aria-label="Color picker" />
+  <input type="range" id="brushSize" min="1" max="50" value="5" title="Brush Size" aria-label="Brush size" />
 
-    <label><input type="checkbox" id="fillToggle"> Fill</label>
+  <select id="tool" aria-label="Select tool">
+    <option value="brush">Brush</option>
+    <option value="eraser">Eraser</option>
+    <option value="line">Line</option>
+    <option value="rect">Rectangle</option>
+    <option value="circle">Circle</option>
+  </select>
 
-    <button id="undoBtn">Undo</button>
-    <button id="redoBtn">Redo</button>
-    <button id="clearBtn">Clear</button>
-    <button id="saveBtn">Save</button>
-    <button id="themeBtn">🌙 Toggle Theme</button>
-  </div>
+  <label><input type="checkbox" id="fillToggle" /> Fill</label>
 
-  <canvas id="drawingCanvas"></canvas>
+  <button id="undoBtn" title="Undo (Ctrl+Z)" aria-label="Undo">Undo</button>
+  <button id="redoBtn" title="Redo (Ctrl+Y)" aria-label="Redo">Redo</button>
+  <button id="clearBtn" title="Clear canvas" aria-label="Clear">Clear</button>
+  <button id="saveBtn" title="Save drawing" aria-label="Save">Save</button>
+  <button id="themeBtn" title="Toggle theme" aria-label="Toggle theme">🌙</button>
+</div>
 
-  <script>
-    const canvas = document.getElementById('drawingCanvas');
-    const ctx = canvas.getContext('2d');
-    const colorPicker = document.getElementById('colorPicker');
-    const brushSize = document.getElementById('brushSize');
-    const tool = document.getElementById('tool');
-    const fillToggle = document.getElementById('fillToggle');
-    const undoBtn = document.getElementById('undoBtn');
-    const redoBtn = document.getElementById('redoBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const saveBtn = document.getElementById('saveBtn');
-    const themeBtn = document.getElementById('themeBtn');
+<button id="toggleToolbarBtn" title="Toggle toolbar" aria-label="Toggle toolbar">☰</button>
 
-    let isDrawing = false, startX = 0, startY = 0;
-    let history = [], redoStack = [];
+<canvas id="drawingCanvas" tabindex="0" aria-label="Drawing canvas"></canvas>
+<div id="cursorPreview" style="display:none;"></div>
 
-    // Utilities
-    const getBackgroundColor = () =>
-      getComputedStyle(document.body).backgroundColor;
+<script>
+  class DrawingTool {
+    constructor(canvas, toolbarElements) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.colorPicker = toolbarElements.colorPicker;
+      this.brushSize = toolbarElements.brushSize;
+      this.toolSelect = toolbarElements.toolSelect;
+      this.fillToggle = toolbarElements.fillToggle;
+      this.undoBtn = toolbarElements.undoBtn;
+      this.redoBtn = toolbarElements.redoBtn;
+      this.clearBtn = toolbarElements.clearBtn;
+      this.saveBtn = toolbarElements.saveBtn;
+      this.themeBtn = toolbarElements.themeBtn;
+      this.toolbar = toolbarElements.toolbar;
+      this.toggleToolbarBtn = toolbarElements.toggleToolbarBtn;
 
-    const resizeCanvas = () => {
-      const data = canvas.toDataURL();
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      const img = new Image();
-      img.src = data;
-      img.onload = () => ctx.drawImage(img, 0, 0);
-    };
+      this.cursorPreview = document.getElementById('cursorPreview');
 
-    const saveState = () => {
-      history.push(canvas.toDataURL());
-      if (history.length > 20) history.shift();
-      redoStack = [];
-      localStorage.setItem("autosave", canvas.toDataURL());
-    };
+      this.isDrawing = false;
+      this.startX = 0;
+      this.startY = 0;
 
-    const restoreFromLocal = () => {
-      const saved = localStorage.getItem("autosave");
-      if (saved) {
-        const img = new Image();
-        img.src = saved;
-        img.onload = () => ctx.drawImage(img, 0, 0);
-      }
-    };
+      this.history = [];
+      this.redoStack = [];
 
-    // Drawing logic
-    function getCoords(e) {
-      const rect = canvas.getBoundingClientRect();
-      if (e.touches) {
-        return {
-          x: e.touches[0].clientX - rect.left,
-          y: e.touches[0].clientY - rect.top,
-        };
-      } else {
-        return {
-          x: e.offsetX,
-          y: e.offsetY
-        };
-      }
+      this.maxHistory = 30; // increased history limit
+
+      this.init();
     }
 
-    function startDrawing(x, y) {
-      isDrawing = true;
-      startX = x;
-      startY = y;
-      if (tool.value === 'brush' || tool.value === 'eraser') {
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-      }
-    }
+    init() {
+      this.resizeCanvas();
+      this.restoreFromLocal();
 
-    function draw(x, y) {
-      if (!isDrawing) return;
-
-      if (tool.value === 'brush' || tool.value === 'eraser') {
-        ctx.strokeStyle = tool.value === 'eraser' ? getBackgroundColor() : colorPicker.value;
-        ctx.lineWidth = brushSize.value;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.lineTo(x, y);
-        ctx.stroke();
-      }
-    }
-
-    function stopDrawing(x, y) {
-      if (!isDrawing) return;
-
-      if (tool.value !== 'brush' && tool.value !== 'eraser') {
-        ctx.beginPath();
-        ctx.strokeStyle = colorPicker.value;
-        ctx.lineWidth = brushSize.value;
-
-        if (fillToggle.checked) {
-          ctx.fillStyle = colorPicker.value;
-        }
-
-        switch (tool.value) {
-          case 'line':
-            ctx.moveTo(startX, startY);
-            ctx.lineTo(x, y);
-            ctx.stroke();
-            break;
-          case 'rect':
-            const w = x - startX, h = y - startY;
-            fillToggle.checked ? ctx.fillRect(startX, startY, w, h) : ctx.strokeRect(startX, startY, w, h);
-            break;
-          case 'circle':
-            const radius = Math.hypot(x - startX, y - startY);
-            ctx.beginPath();
-            ctx.arc(startX, startY, radius, 0, Math.PI * 2);
-            fillToggle.checked ? ctx.fill() : ctx.stroke();
-            break;
-        }
-      }
-
-      ctx.beginPath(); // Reset for brush
-      isDrawing = false;
-      saveState();
-    }
-
-    // Events
-    canvas.addEventListener('mousedown', e => {
-      const { x, y } = getCoords(e);
-      startDrawing(x, y);
-    });
-    canvas.addEventListener('mousemove', e => {
-      const { x, y } = getCoords(e);
-      draw(x, y);
-    });
-    canvas.addEventListener('mouseup', e => {
-      const { x, y } = getCoords(e);
-      stopDrawing(x, y);
-    });
-    canvas.addEventListener('mouseout', () => isDrawing = false);
-
-    // Touch support
-    canvas.addEventListener('touchstart', e => {
-      e.preventDefault();
-      const { x, y } = getCoords(e);
-      startDrawing(x, y);
-    });
-    canvas.addEventListener('touchmove', e => {
-      e.preventDefault();
-      const { x, y } = getCoords(e);
-      draw(x, y);
-    });
-    canvas.addEventListener('touchend', e => {
-      const { x, y } = getCoords(e.changedTouches[0]);
-      stopDrawing(x, y);
-    });
-
-    // Buttons
-    undoBtn.onclick = () => {
-      if (!history.length) return;
-      redoStack.push(canvas.toDataURL());
-      const img = new Image();
-      img.src = history.pop();
-      img.onload = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
-      };
-    };
-
-    redoBtn.onclick = () => {
-      if (!redoStack.length) return;
-      const imgData = redoStack.pop();
-      history.push(canvas.toDataURL());
-      const img = new Image();
-      img.src = imgData;
-      img.onload = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
-      };
-    };
-
-    clearBtn.onclick = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      history = [];
-      redoStack = [];
-      localStorage.removeItem("autosave");
-    };
-
-    saveBtn.onclick = () => {
-      const link = document.createElement('a');
-      link.download = "drawing.png";
-      link.href = canvas.toDataURL();
-      link.click();
-    };
-
-    themeBtn.onclick = () => {
-      document.body.classList.toggle('dark-mode');
-      localStorage.setItem("theme", document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-    };
-
-    // Initialization
-    window.addEventListener('resize', resizeCanvas);
-    window.addEventListener('load', () => {
-      resizeCanvas();
-      restoreFromLocal();
       if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark-mode');
       }
-    });
-  </script>
+      this.updateCursorPreview();
+
+      this.attachEvents();
+      this.pushHistory(); // initial blank state
+    }
+
+    attachEvents() {
+      window.addEventListener('resize', () => this.resizeCanvas());
+
+      // Unified pointer events for mouse & touch
+      this.canvas.style.touchAction = 'none';
+
+      this.canvas.addEventListener('pointerdown', e => this.pointerDown(e));
+      this.canvas.addEventListener('pointermove', e => this.pointerMove(e));
+      this.canvas.addEventListener('pointerup', e => this.pointerUp(e));
+      this.canvas.addEventListener('pointercancel', e => this.pointerCancel(e));
+      this.canvas.addEventListener('pointerout', e => this.pointerCancel(e));
+      this.canvas.addEventListener('pointerleave', e => this.pointerCancel(e));
+
+      // Buttons
+      this.undoBtn.addEventListener('click', () => this.undo());
+      this.redoBtn.addEventListener('click', () => this.redo());
+      this.clearBtn.addEventListener('click', () => this.clearCanvas());
+      this.saveBtn.addEventListener('click', () => this.saveImage());
+      this.themeBtn.addEventListener('click', () => this.toggleTheme());
+      this.toggleToolbarBtn.addEventListener('click', () => this.toggleToolbar());
+
+      // Update cursor preview on relevant changes
+      this.colorPicker.addEventListener('input', () => this.updateCursorPreview());
+      this.brushSize.addEventListener('input', () => this.updateCursorPreview());
+      this.toolSelect.addEventListener('change', () => this.updateCursorPreview());
+      this.fillToggle.addEventListener('change', () => this.updateCursorPreview());
+
+      // Keyboard shortcuts
+      window.addEventListener('keydown', e => this.handleShortcuts(e));
+
+      // Move cursor preview on pointer move
+      this.canvas.addEventListener('pointermove', e => this.moveCursorPreview(e));
+    }
+
+    handleShortcuts(e) {
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        this.undo();
+      } else if (((e.ctrlKey || e.metaKey) && (e.shiftKey)) && e.key.toLowerCase() === 'z') {
+        // Ctrl+Shift+Z = Redo alternative shortcut
+        e.preventDefault();
+        this.redo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        this.redo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        this.saveImage();
+      } else if (e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+        this.clearCanvas();
+      }
+    }
+
+    resizeCanvas() {
+      // Save current canvas data
+      const temp = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+
+      // Resize canvas to fill window
+      this.canvas.width = window.innerWidth * devicePixelRatio;
+      this.canvas.height = window.innerHeight * devicePixelRatio;
+      this.canvas.style.width = `${window.innerWidth}px`;
+      this.canvas.style.height = `${window.innerHeight}px`;
+
+      // Scale context for high DPI
+      this.ctx.scale(devicePixelRatio, devicePixelRatio);
+
+      // Restore canvas data
+      this.ctx.putImageData(temp, 0, 0);
+    }
+
+    saveState() {
+      if (this.history.length >= this.maxHistory) this.history.shift();
+      this.history.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
+      // Clear redo stack when new action is made
+      this.redoStack = [];
+      // Auto save to localStorage (only basic fallback, compressed storage is complex)
+      try {
+        const dataURL = this.canvas.toDataURL();
+        localStorage.setItem('autosave', dataURL);
+      } catch {
+        // Ignore storage quota exceeded etc
+      }
+      this.updateUndoRedoButtons();
+    }
+
+    pushHistory() {
+      // Push current canvas to history
+      this.history.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
+      this.updateUndoRedoButtons();
+    }
+
+    undo() {
+      if (this.history.length <= 1) return; // Keep one state to avoid blank
+      const lastState = this.history.pop();
+      this.redoStack.push(lastState);
+      const previousState = this.history[this.history.length - 1];
+      if (previousState) {
+        this.ctx.putImageData(previousState, 0, 0);
+        this.updateUndoRedoButtons();
+      }
+    }
+
+    redo() {
+      if (this.redoStack.length === 0) return;
+      const redoState = this.redoStack.pop();
+      this.history.push(redoState);
+      this.ctx.putImageData(redoState, 0, 0);
+      this.updateUndoRedoButtons();
+    }
+
+    updateUndoRedoButtons() {
+      this.undoBtn.disabled = this.history.length <= 1;
+      this.redoBtn.disabled = this.redoStack.length === 0;
+    }
+
+    clearCanvas() {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.history = [];
+      this.redoStack = [];
+      localStorage.removeItem('autosave');
+      this.pushHistory();
+    }
+
+    saveImage() {
+      const link = document.createElement('a');
+      link.download = 'drawing.png';
+      link.href = this.canvas.toDataURL();
+      link.click();
+    }
+
+    restoreFromLocal() {
+      const saved = localStorage.getItem('autosave');
+      if (!saved) return;
+      const img = new Image();
+      img.onload = () => {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.drawImage(img, 0, 0, this.canvas.width / devicePixelRatio, this.canvas.height / devicePixelRatio);
+        this.pushHistory();
+      };
+      img.src = saved;
+    }
+
+    toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+      this.updateCursorPreview();
+    }
+
+    toggleToolbar() {
+      if (this.toolbar.style.display === 'none') {
+        this.toolbar.style.display = 'flex';
+      } else {
+        this.toolbar.style.display = 'none';
+      }
+    }
+
+    // Utility to get current background color (based on theme)
+    getBackgroundColor() {
+      return getComputedStyle(document.body).backgroundColor;
+    }
+
+    getCoords(e) {
+      const rect = this.canvas.getBoundingClientRect();
+      return {
+        x: (e.clientX - rect.left),
+        y: (e.clientY - rect.top)
+      };
+    }
+
+    pointerDown(e) {
+      e.preventDefault();
+      const { x, y } = this.getCoords(e);
+      this.isDrawing = true;
+      this.startX = x;
+      this.startY = y;
+
+      if (this.toolSelect.value === 'brush' || this.toolSelect.value === 'eraser') {
+        this.ctx.beginPath();
+        this.ctx.moveTo(x, y);
+        this.drawLineTo(x, y);
+      }
+    }
+
+    pointerMove(e) {
+      if (!this.isDrawing) {
+        this.moveCursorPreview(e);
+        return;
+      }
+      e.preventDefault();
+      const { x, y } = this.getCoords(e);
+
+      if (this.toolSelect.value === 'brush' || this.toolSelect.value === 'eraser') {
+        this.drawLineTo(x, y);
+      } else {
+        // For shape tools, we redraw preview on temp canvas or overlay
+        this.drawShapePreview(x, y);
+      }
+    }
+
+    pointerUp(e) {
+      if (!this.isDrawing) return;
+      e.preventDefault();
+      const { x, y } = this.getCoords(e);
+
+      if (this.toolSelect.value !== 'brush' && this.toolSelect.value !== 'eraser') {
+        // finalize the shape
+        this.drawShapeFinal(x, y);
+      }
+
+      this.isDrawing = false;
+      this.ctx.beginPath();
+      this.saveState();
+    }
+
+    pointerCancel(e) {
+      this.isDrawing = false;
+      this.ctx.beginPath();
+    }
+
+    drawLineTo(x, y) {
+      this.ctx.strokeStyle = this.toolSelect.value === 'eraser' ? this.getBackgroundColor() : this.colorPicker.value;
+      this.ctx.lineWidth = this.brushSize.value;
+      this.ctx.lineCap = 'round';
+      this.ctx.lineJoin = 'round';
+      this.ctx.lineTo(x, y);
+      this.ctx.stroke();
+    }
+
+    drawShapePreview(x, y) {
+      // Clear temp preview by restoring last saved canvas
+      this.restoreLastCanvasForPreview();
+
+      const fill = this.fillToggle.checked;
+      const strokeColor = this.colorPicker.value;
+      const lineWidth = this.brushSize.value;
+
+      this.ctx.lineWidth = lineWidth;
+      this.ctx.strokeStyle = strokeColor;
+      this.ctx.fillStyle = strokeColor;
+
+      switch (this.toolSelect.value) {
+        case 'line':
+          this.ctx.beginPath();
+          this.ctx.moveTo(this.startX, this.startY);
+          this.ctx.lineTo(x, y);
+          this.ctx.stroke();
+          break;
+        case 'rect':
+          const w = x - this.startX;
+          const h = y - this.startY;
+          if (fill) this.ctx.fillRect(this.startX, this.startY, w, h);
+          else this.ctx.strokeRect(this.startX, this.startY, w, h);
+          break;
+        case 'circle':
+          const radius = Math.hypot(x - this.startX, y - this.startY);
+          this.ctx.beginPath();
+          this.ctx.arc(this.startX, this.startY, radius, 0, Math.PI * 2);
+          if (fill) this.ctx.fill();
+          else this.ctx.stroke();
+          break;
+      }
+    }
+
+    drawShapeFinal(x, y) {
+      this.drawShapePreview(x, y);
+    }
+
+    restoreLastCanvasForPreview() {
+      // Restore from last saved history state to clear shape preview before redrawing
+      if (this.history.length === 0) return;
+      const lastState = this.history[this.history.length - 1];
+      this.ctx.putImageData(lastState, 0, 0);
+    }
+
+    updateCursorPreview() {
+      const tool = this.toolSelect.value;
+      const size = this.brushSize.value;
+      if (tool === 'brush' || tool === 'eraser') {
+        this.cursorPreview.style.width = `${size}px`;
+        this.cursorPreview.style.height = `${size}px`;
+        this.cursorPreview.style.borderWidth = '2px';
+        this.cursorPreview.style.borderStyle = 'solid';
+        this.cursorPreview.style.borderColor = tool === 'eraser' ? this.getBackgroundColor() : this.colorPicker.value;
+        this.cursorPreview.style.backgroundColor = tool === 'eraser' ? 'transparent' : this.colorPicker.value;
+        this.cursorPreview.style.display = 'block';
+      } else if (tool === 'line') {
+        this.cursorPreview.style.width = '12px';
+        this.cursorPreview.style.height = '2px';
+        this.cursorPreview.style.border = 'none';
+        this.cursorPreview.style.backgroundColor = this.colorPicker.value;
+        this.cursorPreview.style.display = 'block';
+      } else if (tool === 'rect' || tool === 'circle') {
+        const sizePreview = Math.max(20, size);
+        this.cursorPreview.style.width = `${sizePreview}px`;
+        this.cursorPreview.style.height = `${sizePreview}px`;
+        this.cursorPreview.style.borderWidth = '2px';
+        this.cursorPreview.style.borderStyle = 'solid';
+        this.cursorPreview.style.borderColor = this.colorPicker.value;
+        this.cursorPreview.style.backgroundColor = this.fillToggle.checked ? this.colorPicker.value : 'transparent';
+        this.cursorPreview.style.display = 'block';
+      } else {
+        this.cursorPreview.style.display = 'none';
+      }
+    }
+
+    moveCursorPreview(e) {
+      const rect = this.canvas.getBoundingClientRect();
+      const x = e.clientX;
+      const y = e.clientY;
+      this.cursorPreview.style.left = `${x}px`;
+      this.cursorPreview.style.top = `${y}px`;
+    }
+  }
+
+  // Initialize on DOM load
+  window.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('drawingCanvas');
+    const toolbarElements = {
+      colorPicker: document.getElementById('colorPicker'),
+      brushSize: document.getElementById('brushSize'),
+      toolSelect: document.getElementById('tool'),
+      fillToggle: document.getElementById('fillToggle'),
+      undoBtn: document.getElementById('undoBtn'),
+      redoBtn: document.getElementById('redoBtn'),
+      clearBtn: document.getElementById('clearBtn'),
+      saveBtn: document.getElementById('saveBtn'),
+      themeBtn: document.getElementById('themeBtn'),
+      toolbar: document.getElementById('toolbar'),
+      toggleToolbarBtn: document.getElementById('toggleToolbarBtn')
+    };
+
+    // Set default color and brush size from last session or default
+    toolbarElements.colorPicker.value = '#000000';
+    toolbarElements.brushSize.value = 5;
+
+    new DrawingTool(canvas, toolbarElements);
+  });
+</script>
+
 </body>
 </html>
