@@ -3,280 +3,505 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projects</title>
+    <title>Kartik Pashte - Professional Projects</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* Global Variables */
+        /* ====================================
+           1. Global Variables & Reset
+           ==================================== */
         :root {
-            --primary-color: #00bfae; /* Teal */
-            --secondary-color: #07070d; /* Dark Background */
-            --text-color: #fff;
-            --card-bg-color: #f9f9f9;
-            --hover-color: #00c7b7; /* Lighter Teal */
-            --border-radius: 10px;
+            --primary-bg: #0d1a26; /* Deep Ocean Blue */
+            --secondary-bg: #1a2a3a; /* Slightly Lighter Blue for Cards/Elements */
+            --accent-color: #ff8c42; /* Bright Orange Accent */
+            --text-color-light: #f0f4f8; /* Off-White for Main Text */
+            --text-color-muted: #95a5a6; /* Muted Gray for descriptions */
+            --border-radius-lg: 12px;
+            --border-radius-sm: 6px;
             --transition-speed: 0.3s;
         }
 
         /* Basic Reset */
-        * {
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: var(--secondary-color);
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color-light);
             min-height: 100vh;
+            display: flex;
             flex-direction: column;
-            padding: 20px;
+            align-items: center;
+            padding: 30px 20px;
+        }
+        
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
         }
 
-        h1, h4 {
-            font-weight: normal;
-        }
-
-        header {
+        /* ====================================
+           2. Header & Navigation
+           ==================================== */
+        .site-header {
             width: 100%;
             max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-            padding: 20px;
+            margin-bottom: 50px;
         }
 
-        .logo h1 {
-            font-size: 2rem;
-            color: var(--text-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 10px;
-            letter-spacing: 1px;
-        }
-
-        nav {
+        .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--secondary-bg);
             flex-wrap: wrap;
         }
 
-        ul {
+        .logo a {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            transition: color var(--transition-speed);
+        }
+
+        .nav-list {
             list-style-type: none;
             display: flex;
             gap: 30px;
         }
 
-        ul li a {
-            color: var(--text-color);
+        .nav-list a {
+            color: var(--text-color-light);
             text-decoration: none;
-            font-size: 1.1rem;
-            transition: color var(--transition-speed);
+            font-size: 1rem;
+            font-weight: 400;
+            padding: 5px 0;
+            transition: color var(--transition-speed), border-bottom var(--transition-speed);
         }
 
-        ul li a:hover {
-            color: var(--primary-color);
+        /* Standard Hover & Focus State */
+        .nav-list a:hover,
+        .nav-list a:focus {
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            outline: none;
+        }
+        
+        /* Dynamic Active Link Styling (Set by JS) */
+        .nav-list a.active {
+            color: var(--accent-color);
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent-color);
         }
 
-        .container {
+        /* ====================================
+           3. Projects Section & Filtering
+           ==================================== */
+        main.projects-container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            color: var(--text-color-light);
+        }
+        
+        /* Filter Bar Styling */
+        .filter-bar {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .filter-button {
+            background-color: var(--secondary-bg);
+            color: var(--text-color-light);
+            border: 1px solid var(--text-color-muted);
+            padding: 8px 15px;
+            margin: 0 5px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background-color var(--transition-speed), border-color var(--transition-speed);
+        }
+
+        .filter-button:hover,
+        .filter-button.filter-active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--primary-bg); /* Dark text on bright button */
+            font-weight: 600;
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 20px 0;
+        }
+
+        /* ====================================
+           4. Project Card Design
+           ==================================== */
+        .card {
+            background-color: var(--secondary-bg);
+            border-radius: var(--border-radius-lg);
+            padding: 20px;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
             display: flex;
             flex-direction: column;
-            align-items: center;
-        }
-
-        .row {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
-            padding: 40px 20px;
-            width: 100%;
-        }
-
-        .card {
-            background-color: var(--card-bg-color);
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            text-align: center;
-            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-        }
-
-        .card img {
-            width: 80%;
-            /* object-fit: cover; */
-            height: auto;
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform var(--transition-speed);
+            overflow: hidden;
+            
+            /* Subtle border */
+            border: 1px solid var(--secondary-bg); 
         }
 
         .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-8px);
+            /* Subtle glowing effect */
+            box-shadow: 0 15px 35px rgba(255, 140, 66, 0.15); 
+            border-color: var(--accent-color);
         }
 
-        .card img:hover {
-            transform: scale(1.1);
+        .card-content img {
+            width: 100%;
+            height: 180px; 
+            object-fit: cover;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .card h1 {
+        .card h2 {
             font-size: 1.5rem;
-            margin: 20px 0;
-            color: var(--primary-color);
+            font-weight: 600;
+            margin: 5px 0 10px 0;
+            color: var(--text-color-light);
         }
 
-        .card h4 {
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            color: #777;
+        /* Tech Stack Tags Feature */
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .tech-tag {
+            background-color: rgba(255, 140, 66, 0.1); /* Light Orange background */
+            color: var(--accent-color);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
-        .card a {
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            padding: 10px 20px;
-            border-radius: var(--border-radius);
-            font-size: 1.1rem;
-            font-weight: bold;
+        .card-link {
+            display: block;
+            background-color: var(--accent-color);
+            color: var(--primary-bg);
+            padding: 12px 25px;
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            font-weight: 700;
+            text-align: center;
             text-decoration: none;
-            transition: background-color var(--transition-speed);
+            transition: background-color var(--transition-speed), transform var(--transition-speed);
+            margin-top: auto;
         }
 
-        .card a:hover {
-            background-color: var(--hover-color);
+        .card-link:hover,
+        .card-link:focus {
+            background-color: #ff9d61; 
+            transform: scale(0.98);
+            outline: none;
         }
 
-        /* Media Queries for Responsiveness */
+        /* ====================================
+           5. Responsiveness
+           ==================================== */
+        
+        /* 1. Medium Devices / Tablets (max-width 992px) */
+        @media (max-width: 992px) {
+            .projects-grid {
+                /* Change to a 2-column layout to save space */
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 25px;
+            }
+            
+            .nav-list {
+                gap: 20px;
+            }
+        }
+        
+        /* 2. Small Devices / Standard Mobiles (max-width 768px) */
         @media (max-width: 768px) {
-            ul {
+            .navbar {
+                /* Stack navigation items vertically */
+                flex-direction: column;
+                gap: 20px;
+                padding-bottom: 25px; 
+            }
+            
+            .nav-list {
+                /* Center-align links when stacked */
+                justify-content: center;
                 gap: 15px;
+            }
+
+            .logo a {
+                font-size: 2.2rem;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .filter-bar {
+                /* Allow filter buttons to wrap to next line if needed */
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .projects-grid {
+                /* Switch to a single column for maximum readability */
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        /* 3. Extra Small Devices / Narrow Mobiles (max-width 480px) */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            .logo a {
+                font-size: 1.8rem;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            .nav-list {
+                /* Wrap navigation items if they still overflow */
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .filter-button {
+                padding: 6px 12px;
                 font-size: 0.9rem;
-            }
-
-            .logo h1 {
-                font-size: 1.6rem;
-            }
-
-            .card h1 {
-                font-size: 1.3rem;
-            }
-
-            .card a {
-                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <nav>
+    <header class="site-header">
+        <nav class="navbar">
             <div class="logo">
-                <h1>Kartik Pashte</h1>
+                <a href="./index.html">Kartik Pashte</a>
             </div>
-            <ul>
-                <li><a style="color:#00bfae;" href="">Home</a></li>
+            <ul class="nav-list">
+                <li><a href="./index.html">Projects</a></li>
                 <li><a href="./portfolio.html">Portfolio</a></li>
                 <li><a href="./about.html">About</a></li>
-                <li><a href="./contact.html">contact</a></li>
+                <li><a href="./contact.html">Contact</a></li>
             </ul>
         </nav>
-
-        <div class="container">
-            <h1 class="title">My Projects</h1>
-            <div class="row">
-                <!-- Tic Tac Toe -->
-                <div class="card">
-                    <img src="./image/image copy 3 (1).png" alt="Tic Tac Toe">
-                    <h1>Tic Tac Toe</h1>
-                    <h4>HTML | CSS | JS</h4>
-                    <a href="./Tic_tac-toe.html">View Project</a>
-                </div>
-
-                <!-- Form -->
-                <div class="card">
-                    <br>
-                    <img style="min-height: 40%;" src="./image/image (1).png" alt="Form">
-                    <br><br>
-                    <h1>Form</h1>
-                    <h4>HTML | CSS | JS</h4>
-                    <br><br>
-                    <a href="./form.html">View Project</a>
-                </div>
-
-                <!-- Digital Clock -->
-                <div class="card">
-                    <img src="./image/image copy (1).png" alt="Digital Clock">
-                    <h1>Digital Clock</h1>
-                    <h4>HTML | CSS | JS</h4>
-                    <a href="./digitalClock.html">View Project</a>
-                </div>
-
-                <!-- Rock Paper Scissor -->
-                <div class="card">
-                    <img src="./image/image.png" alt="Rock Paper Scissors">
-                    <h1>Rock Paper Scissor</h1>
-                    <h4>HTML | CSS | JS</h4>
-                    <a href="./RockPaperScissor.html">View Project</a>
-                </div>
-
-                <!-- Todo List -->
-                <div class="card">
-                    <img src="./image/image copy 5 (1).png" alt="Todo List">
-                    <h1>Todo List</h1>
-                    <h4>HTML | CSS | JS</h4>
-                    <a href="./todolist.html">View Project</a>
-                </div>
-
-                <!-- Portfolio -->
-                <div class="card">
-                    <img src="./image/image copy 4 (1).png" alt="Portfolio">
-                    <h1>Portfolio</h1>
-                    <h4>HTML | CSS | JS</h4>
-                    <a href="./portfolio.html">View Project</a>
-                </div>
-
-                <div class="card">
-                    <img style="min-height: 40%;" src="./image/e.png" alt="Portfolio">
-                    <br><br>
-                    <h1>E-Commerce Store</h1>
-                    <h4>HTML | CSS | JS</h4>
-                    <a href="./marketing.html">View Project</a>
-                </div>
-
-                <div class="card">
-                    <img src="./image/image copy 6 (1).png" alt="Portfolio">
-                    <h1>Weather app</h1>
-                    <h4>HTML | CSS | JS</h4>
-                    <a href="./Weather.html">View Project</a>
-                </div>
-
-                <div class="card">
-                    <img src="./image/image copy 7 (1).png" alt="Portfolio">
-                    <h1>Youtube Thumbnail</h1>
-                    <h4>HTML | CSS | JS</h4>
-                    <a href="./youtube.html">View Project</a>
-                </div>
-
-                <div class="card">
-                    <img src="./image/image copy 8.png" alt="Portfolio">
-                    <h1>Coinflip</h1>
-                    <h4>HTML | CSS | JS</h4>
-                    <a href="./coinflip.html">View Project</a>
-                </div>
-
-                <div class="card">
-                    <img src="./image/image copy.png" alt="Portfolio">
-                    <h1>DrawingTool</h1>
-                    <h4>HTML | CSS | JS</h4>
-                    <a href="./DrawingTool.html">View Project</a>
-                </div>
-
-            </div>
-        </div>
     </header>
+
+    <main class="projects-container">
+        <h1 class="section-title">My Development Work</h1>
+        
+        <div class="filter-bar">
+            <button class="filter-button filter-active" data-filter="all">All Projects</button>
+            <button class="filter-button" data-filter="Game">Games</button>
+            <button class="filter-button" data-filter="Tool">Websites & Tools</button>
+            <button class="filter-button" data-filter="E-Commerce">E-Commerce</button>
+        </div>
+
+        <div class="projects-grid">
+            
+            <div class="card" data-category="Game">
+                <div class="card-content">
+                    <img src="./image/image copy 3 (1).png" alt="Screenshot of Tic Tac Toe game">
+                    <h2>Tic Tac Toe</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span><span class="tech-tag">JS</span>
+                    </div>
+                </div>
+                <a href="./Tic_tac-toe.html" class="card-link">View Project</a>
+            </div>
+
+            <div class="card" data-category="Game">
+                <div class="card-content">
+                    <img src="./image/image.png" alt="Screenshot of Rock Paper Scissors game">
+                    <h2>Rock Paper Scissor</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span><span class="tech-tag">JS</span>
+                    </div>
+                </div>
+                <a href="./RockPaperScissor.html" class="card-link">View Project</a>
+            </div>
+
+            <div class="card" data-category="Game">
+                <div class="card-content">
+                    <img src="./image/image copy 8.png" alt="Screenshot of a coin flip game">
+                    <h2>Coinflip Game</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span><span class="tech-tag">JS</span>
+                    </div>
+                </div>
+                <a href="./coinflip.html" class="card-link">View Project</a>
+            </div>
+
+            <div class="card" data-category="Tool">
+                <div class="card-content">
+                    <img src="./image/image (1).png" alt="Screenshot of a professional web form">
+                    <h2>Form Validator</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span><span class="tech-tag">JS</span>
+                    </div>
+                </div>
+                <a href="./form.html" class="card-link">View Project</a>
+            </div>
+
+            <div class="card" data-category="Tool">
+                <div class="card-content">
+                    <img src="./image/image copy (1).png" alt="Screenshot of a digital clock interface">
+                    <h2>Digital Clock</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span><span class="tech-tag">JS</span>
+                    </div>
+                </div>
+                <a href="./digitalClock.html" class="card-link">View Project</a>
+            </div>
+
+            <div class="card" data-category="Tool">
+                <div class="card-content">
+                    <img src="./image/image copy 5 (1).png" alt="Screenshot of a To-Do List application">
+                    <h2>Todo List</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span><span class="tech-tag">JS</span>
+                    </div>
+                </div>
+                <a href="./todolist.html" class="card-link">View Project</a>
+            </div>
+            
+            <div class="card" data-category="Tool">
+                <div class="card-content">
+                    <img src="./image/image copy 4 (1).png" alt="Screenshot of a personal portfolio website">
+                    <h2>Portfolio Site</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span>
+                    </div>
+                </div>
+                <a href="./portfolio.html" class="card-link">View Project</a>
+            </div>
+
+            <div class="card" data-category="Tool">
+                <div class="card-content">
+                    <img src="./image/image copy 6 (1).png" alt="Screenshot of a weather application">
+                    <h2>Weather App</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span><span class="tech-tag">JS</span>
+                    </div>
+                </div>
+                <a href="./Weather.html" class="card-link">View Project</a>
+            </div>
+
+            <div class="card" data-category="Tool">
+                <div class="card-content">
+                    <img src="./image/image copy 7 (1).png" alt="Screenshot of a YouTube thumbnail generator interface">
+                    <h2>Youtube Thumbnail Design</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span>
+                    </div>
+                </div>
+                <a href="./youtube.html" class="card-link">View Project</a>
+            </div>
+
+            <div class="card" data-category="Tool">
+                <div class="card-content">
+                    <img src="./image/image copy.png" alt="Screenshot of a simple drawing tool application">
+                    <h2>Drawing Tool</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span><span class="tech-tag">JS</span>
+                    </div>
+                </div>
+                <a href="./DrawingTool.html" class="card-link">View Project</a>
+            </div>
+            
+            <div class="card" data-category="E-Commerce">
+                <div class="card-content">
+                    <img src="./image/e.png" alt="Screenshot of an E-Commerce store front page">
+                    <h2>E-Commerce Store</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span><span class="tech-tag">JS</span>
+                    </div>
+                </div>
+                <a href="./marketing.html" class="card-link">View Project</a>
+            </div>
+            
+        </div>
+    </main>
+
+    <script>
+        // 1. Dynamic Active Link Highlighting
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-list a');
+            // Get the current file name, default to 'index.html' if at root
+            const currentPath = window.location.pathname.split('/').pop().toLowerCase() || 'index.html';
+
+            navLinks.forEach(link => {
+                const linkPath = link.getAttribute('href').split('/').pop().toLowerCase() || 'index.html';
+                
+                if (linkPath === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        
+            // 2. Project Filtering Logic based on New Categories
+            const filterButtons = document.querySelectorAll('.filter-button');
+            const projectCards = document.querySelectorAll('.card');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const filterValue = button.getAttribute('data-filter');
+
+                    // Update active button state
+                    filterButtons.forEach(btn => btn.classList.remove('filter-active'));
+                    button.classList.add('filter-active');
+
+                    // Filter cards using the data-category attribute
+                    projectCards.forEach(card => {
+                        const category = card.getAttribute('data-category');
+
+                        if (filterValue === 'all' || category === filterValue) {
+                            card.classList.remove('hidden');
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>
