@@ -3,9 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coin Flip</title>
+    <title>Pro Coin Flip Game</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        /* CSS Variables for better maintenance */
+        :root {
+            --primary-color: #007bff; /* Blue */
+            --secondary-color: #6c757d; /* Gray */
+            --background-color: #f8f9fa; /* Light Gray/Off-White */
+            --coin-size: 150px;
+            --container-width: 400px;
+            --box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            --spin-duration: 3s;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
         * {
             margin: 0;
@@ -16,7 +27,7 @@
 
         body {
             height: 100vh;
-            background: lightblue;
+            background: var(--background-color);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,151 +36,290 @@
         .container {
             background: #fff;
             width: 90%;
-            max-width: 400px;
+            max-width: var(--container-width);
             padding: 30px;
-            border-radius: 10px;
+            border-radius: 12px;
             text-align: center;
-            box-shadow: 15px 30px 35px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        /* Interactive effect on hover */
+        .container:hover {
+             transform: translateY(-5px);
         }
 
-        .stats {
-            margin-bottom: 20px;
+        .stats-grid {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            color: var(--secondary-color);
+        }
+        
+        .stats-grid p {
             font-weight: 600;
         }
 
         .coin {
-            height: 150px;
-            width: 150px;
-            margin: 20px auto;
+            height: var(--coin-size);
+            width: var(--coin-size);
+            margin: 25px auto;
             position: relative;
             transform-style: preserve-3d;
+            cursor: pointer; /* Suggests interactivity */
         }
 
-        .coin img {
-            width: 100%;
-        }
-
-        .heads, .tails {
+        .coin-face {
             position: absolute;
             width: 100%;
             height: 100%;
+            border-radius: 50%; /* Make sure faces are round */
             backface-visibility: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            overflow: hidden; /* Contains the image within the circle */
+        }
+
+        .coin-face img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .tails {
             transform: rotateX(180deg);
         }
-
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        button {
-            width: 48%;
-            padding: 10px;
-            border: 2px solid lightblue;
-            border-radius: 5px;
-            background: #fff;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        #flip-button:disabled {
-            background-color: lightblue;
-            color: white;
-        }
-
+        
+        /* Spin Animations */
         @keyframes spin-heads {
             0% { transform: rotateX(0); }
-            100% { transform: rotateX(2160deg); }
+            100% { transform: rotateX(2160deg); } /* 6 full rotations */
         }
 
         @keyframes spin-tails {
             0% { transform: rotateX(0); }
-            100% { transform: rotateX(1980deg); }
+            100% { transform: rotateX(1980deg); } /* 5.5 full rotations */
         }
 
+        .coin.heads-result {
+            animation: spin-heads var(--spin-duration) forwards;
+        }
+        
+        .coin.tails-result {
+            animation: spin-tails var(--spin-duration) forwards;
+        }
+
+
         #result {
-            margin-top: 15px;
-            font-size: 18px;
+            margin-top: 20px;
+            font-size: 1.5em; /* Larger font for emphasis */
+            font-weight: 700;
+            color: var(--primary-color);
+            min-height: 1.5em; /* Reserve space to prevent layout shift */
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex-grow: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
             font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        #flip-button {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+
+        #reset-button {
+            background: #fff;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        #flip-button:disabled {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            cursor: not-allowed;
+            opacity: 0.7;
+            transform: none;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="stats">
+    <h1>Coin Flip Game</h1>
+    <div class="stats-grid">
         <p id="heads-count">Heads: 0</p>
         <p id="tails-count">Tails: 0</p>
     </div>
 
     <div class="coin" id="coin">
-        <div class="heads">
-            <img src="https://previews.123rf.com/images/webstocker/webstocker1711/webstocker171100045/89827841-gold-coin-with-letter-h-design.jpg" alt="Heads">
+        <div class="coin-face heads">
+            <img src="https://previews.123rf.com/images/webstocker/webstocker1711/webstocker171100045/89827841-gold-coin-with-letter-h-design.jpg" alt="Heads side of the coin">
         </div>
-        <div class="tails">
-            <img src="https://previews.123rf.com/images/webstocker/webstocker1711/webstocker171100050/90456031-gold-coin-with-capital-letter-t-design-vector.jpg" alt="Tails">
+        <div class="coin-face tails">
+            <img src="https://previews.123rf.com/images/webstocker/webstocker1711/webstocker171100050/90456031-gold-coin-with-capital-letter-t-design-vector.jpg" alt="Tails side of the coin">
         </div>
     </div>
 
-    <p id="result">Result: -</p>
+    <p id="result" aria-live="polite">Result: Click Flip to start</p>
 
     <div class="buttons">
-        <button id="flip-button">Flip</button>
-        <button id="reset-button">Reset</button>
+        <button id="flip-button" aria-label="Flip the coin">Flip</button>
+        <button id="reset-button" aria-label="Reset game statistics">Reset</button>
     </div>
 </div>
 
 <script>
-    let heads = 0;
-    let tails = 0;
+    /**
+     * CoinFlipGame Class for managing all game logic and UI updates.
+     * This separates the game state from the DOM manipulation.
+     */
+    class CoinFlipGame {
+        constructor(selectors) {
+            // Game State
+            this.heads = 0;
+            this.tails = 0;
+            this.isFlipping = false;
 
-    const coin = document.querySelector(".coin");
-    const flipBtn = document.getElementById("flip-button");
-    const resetBtn = document.getElementById("reset-button");
-    const headsCount = document.getElementById("heads-count");
-    const tailsCount = document.getElementById("tails-count");
-    const result = document.getElementById("result");
+            // DOM Elements (using selectors passed in)
+            this.coinEl = document.querySelector(selectors.coin);
+            this.flipBtn = document.querySelector(selectors.flipButton);
+            this.resetBtn = document.querySelector(selectors.resetButton);
+            this.headsCountEl = document.querySelector(selectors.headsCount);
+            this.tailsCountEl = document.querySelector(selectors.tailsCount);
+            this.resultEl = document.querySelector(selectors.result);
 
-    flipBtn.addEventListener("click", () => {
-        // % chance of heads
-        const isHeads = Math.random() < 0.5;
-        coin.style.animation = "none";
-
-        setTimeout(() => {
-            coin.style.animation = isHeads ? "spin-heads 3s forwards" : "spin-tails 3s forwards";
-        }, 100);
-
-        setTimeout(() => {
-            if (isHeads) {
-                heads++;
-                result.textContent = "Result: Heads";
-            } else {
-                tails++;
-                result.textContent = "Result: Tails";
+            if (!this.coinEl || !this.flipBtn) {
+                console.error("Critical DOM elements not found. Check selectors.");
+                return; // Stop initialization if critical elements are missing
             }
-            updateCounts();
-            flipBtn.disabled = false;
-        }, 3000);
 
-        flipBtn.disabled = true;
-    });
+            // Initialization
+            this.bindEvents();
+            this.updateCounts();
+            this.resultEl.textContent = "Result: Click Flip to start";
+        }
 
-    resetBtn.addEventListener("click", () => {
-        heads = 0;
-        tails = 0;
-        result.textContent = "Result: -";
-        coin.style.animation = "none";
-        updateCounts();
-    });
+        /**
+         * Attaches event listeners to buttons.
+         */
+        bindEvents() {
+            this.flipBtn.addEventListener("click", this.handleFlip.bind(this));
+            this.resetBtn.addEventListener("click", this.handleReset.bind(this));
+        }
 
-    function updateCounts() {
-        headsCount.textContent = `Heads: ${heads}`;
-        tailsCount.textContent = `Tails: ${tails}`;
+        /**
+         * Starts the coin flip animation and logic.
+         */
+        handleFlip() {
+            if (this.isFlipping) return; // Prevent double-clicking
+
+            this.isFlipping = true;
+            this.flipBtn.disabled = true;
+            this.resultEl.textContent = "Result: Spinning...";
+            
+            // Determine result (50/50 chance)
+            const isHeads = Math.random() < 0.5;
+            const resultClassName = isHeads ? 'heads-result' : 'tails-result';
+
+            // 1. Clear previous animation classes
+            this.coinEl.classList.remove('heads-result', 'tails-result');
+
+            // Small delay to ensure the browser registers the class removal and allows
+            // the animation to be re-triggered correctly.
+            setTimeout(() => {
+                // 2. Add the animation class for the determined result
+                this.coinEl.classList.add(resultClassName);
+            }, 50); 
+            
+            // 3. Wait for animation to complete (matching CSS --spin-duration: 3s)
+            const animationDurationMs = 3000;
+
+            setTimeout(() => {
+                this.isFlipping = false;
+                this.flipBtn.disabled = false;
+                
+                // 4. Update state and UI
+                this.updateState(isHeads);
+
+            }, animationDurationMs);
+        }
+
+        /**
+         * Updates the game state (heads/tails count) and the result text.
+         * @param {boolean} isHeads - true if the result is Heads, false for Tails.
+         */
+        updateState(isHeads) {
+            if (isHeads) {
+                this.heads++;
+                this.resultEl.textContent = "Result: Heads Wins!";
+            } else {
+                this.tails++;
+                this.resultEl.textContent = "Result: Tails Wins!";
+            }
+            this.updateCounts();
+        }
+
+        /**
+         * Resets the game counts and UI.
+         */
+        handleReset() {
+            this.heads = 0;
+            this.tails = 0;
+            
+            // Reset UI elements
+            this.coinEl.classList.remove('heads-result', 'tails-result');
+            this.coinEl.style.transform = 'none'; // Ensure coin is flat
+            this.resultEl.textContent = "Result: Stats Cleared";
+            this.flipBtn.disabled = false;
+            this.isFlipping = false;
+            
+            this.updateCounts();
+        }
+
+        /**
+         * Updates the heads and tails count displayed in the stats section.
+         */
+        updateCounts() {
+            if (this.headsCountEl) {
+                this.headsCountEl.textContent = `Heads: ${this.heads}`;
+            }
+            if (this.tailsCountEl) {
+                this.tailsCountEl.textContent = `Tails: ${this.tails}`;
+            }
+        }
     }
+
+    // --- Application Initialization ---
+    document.addEventListener("DOMContentLoaded", () => {
+        const game = new CoinFlipGame({
+            coin: "#coin",
+            flipButton: "#flip-button",
+            resetButton: "#reset-button",
+            headsCount: "#heads-count",
+            tailsCount: "#tails-count",
+            result: "#result",
+        });
+    });
 </script>
 
 </body>

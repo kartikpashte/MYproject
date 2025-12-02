@@ -3,203 +3,404 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo-App</title>
+    <title>Pro To-Do App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        *{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        /* --- CSS Variables for easy theme changes --- */
+        :root {
+            --dark-bg: #212122;
+            --container-bg: #f2f2f2;
+            --header-bg: powderblue;
+            --task-bg: #fff;
+            --primary-color: dodgerblue;
+            --success-color: green;
+            --danger-color: red;
+            --shadow-light: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            --shadow-dark: 2px 2px 10px 5px rgba(0, 0, 0, 0.5);
+        }
 
-body{
-    background-color: #212122;
-    height: 100vh;
-    display: flex;
-    align-items: start;
-    justify-content: center;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-.container{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    width: 500px;
-    margin-top: 100px;
-    background-color: #f2f2f2;
-    padding: 10px 20px;
-    border-radius: 10px;
-    gap: 20px;
-    box-shadow: 2px 2px 10px 5px rgba(0, 0, 0, 0.5);
-}
+        body {
+            background-color: var(--dark-bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: start;
+            justify-content: center;
+        }
 
-header{
-    background-color: powderblue;
-    width: 80%;
-    padding: 8px 10px;
-    border-radius: 10px;
-    box-shadow: 2px 2px 10px  rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    
-}
-header input{
-    width: 80%;
-    padding: 8px 10px;
-    background: transparent;
-    outline: none;
-    border: none;
-}
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 90%;
+            max-width: 500px;
+            margin-top: 10vh;
+            background-color: var(--container-bg);
+            padding: 20px;
+            border-radius: 12px;
+            gap: 20px;
+            box-shadow: var(--shadow-dark);
+        }
+        
+        /* --- Header: Input and Add Button --- */
+        header {
+            background-color: var(--header-bg);
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        header input {
+            flex-grow: 1;
+            padding: 10px;
+            background: transparent;
+            outline: none;
+            border: none;
+            font-size: 16px;
+        }
 
-.btn{
-    padding: 8px 10px;
-    background-color: skyblue;
-    border: none;
-    outline: none;
-    border-radius: 10px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-}
-main{
-    border-radius: 10px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    background-color: rgb(194, 226, 255);
-    padding: 8px 10px;
-    width: 80%;
-    gap: 20px;
-}
+        .btn {
+            padding: 10px 15px;
+            background-color: skyblue;
+            border: none;
+            outline: none;
+            border-radius: 8px;
+            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
 
-.inner-header{
-    padding: 10px 20px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-ul{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 10px   ;
-}
+        .btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-1px);
+        }
 
-li{
-    display: flex;
-    align-items: center;
-    justify-content: space-between; 
-    list-style-type: none;
-    padding: 8px 10px;
-    background-color: #f2f2f2;
-    width: 90%;
-    position: relative;
-    
-}
+        /* --- Main Task List Section --- */
+        main {
+            border-radius: 10px;
+            box-shadow: var(--shadow-light);
+            background-color: rgb(194, 226, 255);
+            padding: 15px 10px;
+            width: 100%;
+        }
 
-i{
-    color: dodgerblue;
-}
-.fa-check{
-    
-   position: absolute;
-     right: 10px;
-    padding: 7px;
-    &:hover{
-        background-color: lightblue;
-        color: green;
-    }
-}
+        .inner-header {
+            padding: 5px 10px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .inner-header i {
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .inner-header i:hover {
+            color: var(--dark-bg);
+        }
 
-.fa-trash{
-    
-    position: absolute;
-      right: 35px;
-     padding: 7px;
-     &:hover{
-         background-color: rgb(232, 152, 152);
-         color: red;
-     }
- }
+        ul {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            list-style-type: none;
+            padding: 0;
+        }
 
- .task-completed{
-    text-decoration:line-through;
- }
+        li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--task-bg);
+            padding: 12px 15px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+            position: relative; /* Needed for absolute icons */
+            word-break: break-word; /* Handle long words */
+            min-height: 40px;
+            padding-right: 70px; /* Space for icons */
+        }
+        
+        .task-text {
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        /* --- Task Icons/Actions --- */
+        .task-actions {
+            position: absolute;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .task-actions i {
+            font-size: 1.1em;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 5px;
+            transition: background-color 0.2s, color 0.2s;
+            color: var(--primary-color);
+        }
+
+        .fa-check {
+            right: 40px;
+        }
+        
+        .fa-check:hover {
+            background-color: lightgreen;
+            color: var(--success-color);
+        }
+
+        .fa-trash {
+            right: 10px;
+        }
+        
+        .fa-trash:hover {
+            background-color: rgb(255, 200, 200);
+            color: var(--danger-color);
+        }
+
+        /* --- Completed State --- */
+        li.task-completed {
+            background-color: #e0f7fa; /* Lighter background for completed tasks */
+        }
+        
+        li.task-completed .task-text {
+            text-decoration: line-through;
+            color: var(--secondary-color, #6c757d); /* Grayed out text */
+        }
     </style>
 </head>
 <body>
-     <div class="container">
+    <div class="container">
+        <h1>My To-Do List</h1>
         <header>
-            <input type="text" name="task" id="task" placeholder="Enter Task">
-            <button class="btn" onclick="addTodo()" id="btn">Add</button>
+            <input type="text" id="task-input" placeholder="Add a new task..." required>
+            <button class="btn" id="add-btn" aria-label="Add Task">
+                <i class="fa-solid fa-plus"></i> Add
+            </button>
         </header>
+        
         <main>
             <div class="inner-header">
-                <p>Task List</p>
-                <span><i class="fa-solid fa-filter"></i></span>
+                <p>Tasks</p>
+                <span title="Filter Tasks"><i class="fa-solid fa-filter"></i></span>
             </div>
-            <ul id="ul" class="ul">
-                <!-- <li>Wake up @ 6 <i class="fa-solid fa-check"></i></li>-->
-            </ul>
+            <ul id="task-list">
+                </ul>
         </main>
-     </div>
-     <script>
-        let text = document.getElementById("task")
-let btn = document.getElementById("btn")
-let ul = document.getElementById("ul")
-
-
-let del ,mark;
-function addTodo(){
-    let li = document.createElement('li');
-    li.setAttribute("class","")
-    let textNode = document.createTextNode(text.value);
-  mark= document.createElement("i");
-    mark.classList.add("fa-solid");
-    mark.classList.add("fa-check");
-    mark.addEventListener("click",completeTodo(mark))
-
-    del = document.createElement("i");
-    del.classList.add("fa-solid");
-    del.classList.add("fa-trash");
-    del.addEventListener("click",deleteTodo(del))
-
-    li.appendChild(textNode)
-    li.appendChild(mark)
-    li.appendChild(del)
-    ul.appendChild(li);
-
-}
-
-
-// btn.addEventListener("click",addTodo);
-function deleteTodo(btns){
+    </div>
     
-    btns.addEventListener("click", function (e) {
-        var parent = e.target;
-        console.log(parent);
-        ul.removeChild(parent.parentNode)
-    // parent.classList.add("task-completed"); // To slide out the task to the right
-    // Now we delete that tast which we have slided out
- 
-});
-}
+    <script>
+        /**
+         * The TodoApp Class: Encapsulates all application logic.
+         */
+        class TodoApp {
+            constructor() {
+                // DOM Selectors
+                this.taskInput = document.getElementById('task-input');
+                this.addButton = document.getElementById('add-btn');
+                this.taskList = document.getElementById('task-list');
 
-function completeTodo(btns){
-    btns.addEventListener("click", function (e) {
-        var parent = e.target;
-        console.log(parent);
-        parent.parentNode.classList.add("task-completed")
-    // parent.classList.add("task-completed"); // To slide out the task to the right
-    // Now we delete that tast which we have slided out
+                // State (Load from Local Storage or start empty)
+                this.tasks = this.loadTasks();
 
-});
-}
-     </script>
+                // Initialization
+                this.renderTasks();
+                this.bindEvents();
+            }
+
+            /**
+             * Loads tasks from Local Storage.
+             * @returns {Array<Object>} The array of task objects.
+             */
+            loadTasks() {
+                try {
+                    const tasksJson = localStorage.getItem('todos');
+                    return tasksJson ? JSON.parse(tasksJson) : [];
+                } catch (e) {
+                    console.error("Error loading tasks from Local Storage:", e);
+                    return [];
+                }
+            }
+
+            /**
+             * Saves the current task list to Local Storage.
+             */
+            saveTasks() {
+                try {
+                    localStorage.setItem('todos', JSON.stringify(this.tasks));
+                } catch (e) {
+                    console.error("Error saving tasks to Local Storage:", e);
+                }
+            }
+
+            /**
+             * Renders all tasks in the current state array to the DOM.
+             */
+            renderTasks() {
+                this.taskList.innerHTML = ''; // Clear existing list
+                
+                if (this.tasks.length === 0) {
+                    this.taskList.innerHTML = '<li style="justify-content: center; color: #888;">No tasks yet! Add one above.</li>';
+                    return;
+                }
+
+                this.tasks.forEach(task => {
+                    const li = this.createTaskElement(task);
+                    this.taskList.appendChild(li);
+                });
+            }
+
+            /**
+             * Creates a single <li> element for a task.
+             * @param {Object} task - { id, text, completed }
+             * @returns {HTMLElement} The created list item element.
+             */
+            createTaskElement(task) {
+                const li = document.createElement('li');
+                li.setAttribute('data-id', task.id);
+                if (task.completed) {
+                    li.classList.add('task-completed');
+                }
+
+                const taskTextSpan = document.createElement('span');
+                taskTextSpan.classList.add('task-text');
+                taskTextSpan.textContent = task.text;
+                li.appendChild(taskTextSpan);
+
+                const actionsDiv = document.createElement('div');
+                actionsDiv.classList.add('task-actions');
+                
+                // Complete/Check Icon
+                const checkIcon = document.createElement("i");
+                checkIcon.classList.add("fa-solid", "fa-check");
+                checkIcon.setAttribute('title', 'Mark Complete');
+                actionsDiv.appendChild(checkIcon);
+
+                // Delete Icon
+                const trashIcon = document.createElement("i");
+                trashIcon.classList.add("fa-solid", "fa-trash");
+                trashIcon.setAttribute('title', 'Delete Task');
+                actionsDiv.appendChild(trashIcon);
+
+                li.appendChild(actionsDiv);
+                return li;
+            }
+
+            /**
+             * Handles adding a new task from the input field.
+             */
+            addTask = () => {
+                const text = this.taskInput.value.trim();
+                
+                if (text === "") {
+                    // Simple validation
+                    alert("Please enter a task description.");
+                    return;
+                }
+
+                const newTask = {
+                    // Unique ID is a professional requirement for state management
+                    id: Date.now(), 
+                    text: text,
+                    completed: false
+                };
+
+                this.tasks.unshift(newTask); // Add to the start
+                this.saveTasks();
+                this.renderTasks(); // Re-render the list
+                this.taskInput.value = ''; // Clear input
+                this.taskInput.focus(); // Keep focus on input for quick entry
+            }
+
+            /**
+             * Handles click events on the task list (delegation).
+             * @param {Event} e - The click event object.
+             */
+            handleTaskClick = (e) => {
+                const target = e.target;
+                
+                // Find the closest task list item (li) to get its ID
+                const listItem = target.closest('li');
+                if (!listItem) return;
+
+                const taskId = Number(listItem.getAttribute('data-id'));
+
+                if (target.classList.contains('fa-trash')) {
+                    this.deleteTask(taskId);
+                } else if (target.classList.contains('fa-check')) {
+                    this.toggleComplete(taskId);
+                }
+            }
+
+            /**
+             * Deletes a task by ID.
+             * @param {number} id - The unique ID of the task to delete.
+             */
+            deleteTask(id) {
+                // Filter the tasks array to remove the task with the matching ID
+                this.tasks = this.tasks.filter(task => task.id !== id);
+                this.saveTasks();
+                this.renderTasks();
+            }
+
+            /**
+             * Toggles the 'completed' status of a task by ID.
+             * @param {number} id - The unique ID of the task to toggle.
+             */
+            toggleComplete(id) {
+                const taskIndex = this.tasks.findIndex(task => task.id === id);
+                
+                if (taskIndex !== -1) {
+                    this.tasks[taskIndex].completed = !this.tasks[taskIndex].completed;
+                    this.saveTasks();
+                    this.renderTasks();
+                }
+            }
+
+            /**
+             * Sets up all the event listeners.
+             */
+            bindEvents() {
+                // Add button click
+                this.addButton.addEventListener('click', this.addTask);
+                
+                // Input Enter key press
+                this.taskInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.addTask();
+                    }
+                });
+
+                // Event Delegation: Listen on the UL, handle clicks on its children (icons)
+                this.taskList.addEventListener('click', this.handleTaskClick);
+            }
+        }
+
+        // Initialize the application when the DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new TodoApp();
+        });
+    </script>
 </body>
 </html>

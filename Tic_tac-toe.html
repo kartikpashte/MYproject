@@ -3,13 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe</title>
+    <title>Pro Tic Tac Toe</title>
     <style>
+        /* --- CSS Variables --- */
+        :root {
+            --color-primary: #3b5998; /* A cool blue */
+            --color-secondary: #ff6f61; /* Player X (Red-Orange) */
+            --color-tertiary: #4a90e2; /* Player O (Light Blue) */
+            --color-background: #f4f7f6;
+            --color-accent: #ffeb3b; /* Winning line highlight */
+            --box-size: 100px;
+        }
+
+        /* --- Global Reset & Body Styles --- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -18,203 +29,297 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            gap: 20px;
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            gap: 30px;
+            background: var(--color-background);
+            background-image: linear-gradient(135deg, #e0eafc, #cfdef3);
             padding: 20px;
         }
 
+        /* --- Header & Status --- */
         h1 {
-            font-family: 'Cursive';
-            color: #ffffff;
-            font-size: 3.5rem;
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
-            text-align: center;
+            color: var(--color-primary);
+            font-size: 3rem;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
         }
 
         #status {
             font-size: 1.5rem;
-            color: #fff;
-            font-weight: bold;
-            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
+            color: var(--color-primary);
+            font-weight: 600;
             text-align: center;
+            min-height: 25px; /* Prevent layout shift */
         }
 
+        /* --- Game Board Container --- */
         .container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            width: 100%;
-            max-width: 500px;
-            aspect-ratio: 1 / 1;
+            grid-template-columns: repeat(3, var(--box-size));
+            grid-template-rows: repeat(3, var(--box-size));
+            gap: 10px;
+            width: fit-content;
+            max-width: 90vw;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 15px;
+            padding: 15px;
+            background-color: #ffffff;
         }
 
+        /* --- Game Box Styling --- */
         .box {
-            width: 160px;
-            height: 160px;
             background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
-            font-family: 'Cursive';
-            transition: all 0.3s ease;
+            font-size: 3rem;
+            font-weight: bold;
             cursor: pointer;
-            color: #333;
-            background: linear-gradient(145deg, #f0f0f0, #dcdcdc);
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
         }
 
-        .box:hover {
-            transform: scale(1.05);
-            box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.3);
-            background-color: #ffd700;
+        .box:not(.disabled):hover {
+            background-color: #e6f0ff;
+            transform: scale(1.03);
         }
 
+        /* Styles for the markers */
         .box.X {
-            color: #ff6f61;
+            color: var(--color-secondary);
         }
 
         .box.O {
-            color: #4a90e2;
+            color: var(--color-tertiary);
         }
 
-        .alert {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 350px;
-            padding: 25px;
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
-            border-radius: 15px;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            visibility: hidden;
-            color: #fff;
+        /* Style for the winning line */
+        .box.win-line {
+            background-color: var(--color-accent);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--color-accent);
+        }
+
+        /* Disable pointer events when the game is over */
+        .box.disabled {
+            cursor: default;
+        }
+
+        /* --- Alert Modal --- */
+        .alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none; /* Controlled by JS */
+            align-items: center;
+            justify-content: center;
             z-index: 10;
         }
 
-        .alert h1 {
-            font-size: 1.8rem;
+        .alert-content {
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            transform: scale(0.9);
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .alert-content h2 {
+            font-size: 2.2rem;
             margin-bottom: 10px;
+            color: var(--color-primary);
         }
 
-        .alert h3 {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
+        .alert-content p {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: #666;
         }
 
-        .alert button {
-            background-color: #7bf38b;
+        .alert-content button {
+            background-color: var(--color-primary);
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 12px 30px;
             font-size: 1.1rem;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.1s;
         }
 
-        .alert button:hover {
-            background-color: #ff3b30;
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+        .alert-content button:hover {
+            background-color: #294a8f;
         }
 
-        .alert button:focus {
-            outline: none;
+        .alert-content button:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
 <body>
 
-    <h1>Tic Tac Toe</h1>
-    <p id="status">Player X's Turn</p>
+    <header>
+        <h1>🎮 Tic Tac Toe Pro</h1>
+    </header>
 
-    <div class="container">
-        <div id="0" class="box" onclick="play(this)"></div>
-        <div id="1" class="box" onclick="play(this)"></div>
-        <div id="2" class="box" onclick="play(this)"></div>
-        <div id="3" class="box" onclick="play(this)"></div>
-        <div id="4" class="box" onclick="play(this)"></div>
-        <div id="5" class="box" onclick="play(this)"></div>
-        <div id="6" class="box" onclick="play(this)"></div>
-        <div id="7" class="box" onclick="play(this)"></div>
-        <div id="8" class="box" onclick="play(this)"></div>
-    </div>
+    <main aria-label="Tic Tac Toe Game Board">
+        <p id="status" role="status">Player X's Turn</p>
 
-    <div id="alert" class="alert">
-        <h1 id="title"></h1>
-        <h3 id="sub-title">You won the Game</h3>
-        <button onclick="restartGame()">Restart Game</button>
+        <div class="container" id="game-board">
+            <div class="box" data-cell-index="0" role="button" tabindex="0" aria-label="Cell 1 of 9"></div>
+            <div class="box" data-cell-index="1" role="button" tabindex="0" aria-label="Cell 2 of 9"></div>
+            <div class="box" data-cell-index="2" role="button" tabindex="0" aria-label="Cell 3 of 9"></div>
+            <div class="box" data-cell-index="3" role="button" tabindex="0" aria-label="Cell 4 of 9"></div>
+            <div class="box" data-cell-index="4" role="button" tabindex="0" aria-label="Cell 5 of 9"></div>
+            <div class="box" data-cell-index="5" role="button" tabindex="0" aria-label="Cell 6 of 9"></div>
+            <div class="box" data-cell-index="6" role="button" tabindex="0" aria-label="Cell 7 of 9"></div>
+            <div class="box" data-cell-index="7" role="button" tabindex="0" aria-label="Cell 8 of 9"></div>
+            <div class="box" data-cell-index="8" role="button" tabindex="0" aria-label="Cell 9 of 9"></div>
+        </div>
+    </main>
+
+    <div id="alert-overlay" class="alert-overlay" role="dialog" aria-modal="true" aria-labelledby="alert-title">
+        <div class="alert-content">
+            <h2 id="alert-title"></h2>
+            <p id="alert-message"></p>
+            <button id="restart-button">Play Again</button>
+        </div>
     </div>
 
     <script>
-        let turn = "X";
-        let arr = new Array(9).fill(null);
-        let isWin = false;
-        const alertBox = document.getElementById("alert");
-        const statusText = document.getElementById("status");
-        const boxes = document.querySelectorAll(".box");
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Game State Variables ---
+            let currentPlayer = "X";
+            let boardState = new Array(9).fill(null);
+            let gameActive = true;
 
-        function play(e) {
-            if (!isWin && arr[e.id] === null) {
-                arr[e.id] = turn;
-                e.innerText = turn;
-                e.classList.add(turn);
+            // --- DOM Element References ---
+            const statusText = document.getElementById("status");
+            const boxes = document.querySelectorAll(".container .box");
+            const alertOverlay = document.getElementById("alert-overlay");
+            const alertTitle = document.getElementById("alert-title");
+            const alertMessage = document.getElementById("alert-message");
+            const restartButton = document.getElementById("restart-button");
 
-                checkWinner();
-
-                if (!isWin) {
-                    turn = turn === "X" ? "O" : "X";
-                    statusText.innerText = `Player ${turn}'s Turn`;
-                }
-            }
-        }
-
-        function checkWinner() {
-            const winPatterns = [
-                [0, 1, 2], [3, 4, 5], [6, 7, 8],
-                [0, 3, 6], [1, 4, 7], [2, 5, 8],
-                [0, 4, 8], [2, 4, 6]
+            // --- Winning Patterns ---
+            const WIN_PATTERNS = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                [0, 4, 8], [2, 4, 6]  // Diagonals
             ];
 
-            for (let pattern of winPatterns) {
-                const [a, b, c] = pattern;
-                if (arr[a] && arr[a] === arr[b] && arr[b] === arr[c]) {
-                    isWin = true;
-                    showAlert(`Congratulations Player ${arr[a]}`, "You won the Game!");
+            // --- Event Listeners ---
+            boxes.forEach(box => {
+                box.addEventListener('click', handleCellClick);
+                // Add support for keyboard (Enter/Space) for accessibility
+                box.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        handleCellClick(e);
+                    }
+                });
+            });
+
+            restartButton.addEventListener('click', restartGame);
+
+            // --- Core Game Logic ---
+
+            function handleCellClick(event) {
+                const clickedCell = event.target;
+                const cellIndex = parseInt(clickedCell.getAttribute('data-cell-index'));
+
+                // Check if the cell is already played or the game is over
+                if (boardState[cellIndex] !== null || !gameActive) {
                     return;
                 }
+
+                // 1. Update Game State
+                boardState[cellIndex] = currentPlayer;
+
+                // 2. Update UI
+                clickedCell.innerText = currentPlayer;
+                clickedCell.classList.add(currentPlayer);
+                clickedCell.classList.add('disabled');
+                clickedCell.setAttribute('aria-label', `Player ${currentPlayer} selected cell ${cellIndex + 1} of 9`);
+
+                // 3. Check for Win/Draw
+                const winningPattern = checkWinner();
+                if (winningPattern) {
+                    // Handle Win
+                    gameActive = false;
+                    highlightWinningLine(winningPattern);
+                    showAlert(`🎉 Player ${currentPlayer} Wins!`, "Congratulations on your victory!");
+                    return;
+                }
+
+                if (!boardState.includes(null)) {
+                    // Handle Draw
+                    gameActive = false;
+                    showAlert("🤝 Game is a Draw!", "No one won this round. Better luck next time!");
+                    return;
+                }
+
+                // 4. Switch Player
+                currentPlayer = currentPlayer === "X" ? "O" : "X";
+                statusText.innerText = `Player ${currentPlayer}'s Turn`;
+                statusText.setAttribute('aria-live', 'polite'); // Announce turn change
             }
 
-            if (!arr.includes(null)) {
-                showAlert("Game is Draw!", "No one won the Game.");
+            function checkWinner() {
+                for (let pattern of WIN_PATTERNS) {
+                    const [a, b, c] = pattern;
+                    if (
+                        boardState[a] &&
+                        boardState[a] === boardState[b] &&
+                        boardState[b] === boardState[c]
+                    ) {
+                        return pattern; // Return the winning pattern indices
+                    }
+                }
+                return null;
             }
-        }
 
-        function showAlert(title, message) {
-            alertBox.style.visibility = "visible";
-            document.getElementById("title").innerText = title;
-            document.getElementById("sub-title").innerText = message;
-            boxes.forEach(box => box.style.pointerEvents = "none");
-        }
+            function highlightWinningLine(pattern) {
+                pattern.forEach(index => {
+                    boxes[index].classList.add('win-line');
+                });
+            }
 
-        function restartGame() {
-            alertBox.style.visibility = "hidden";
-            arr = new Array(9).fill(null);
-            isWin = false;
-            turn = "X";
-            statusText.innerText = "Player X's Turn";
+            function showAlert(title, message) {
+                alertTitle.innerText = title;
+                alertMessage.innerText = message;
+                alertOverlay.style.display = "flex";
+            }
 
-            boxes.forEach((box) => {
-                box.innerText = "";
-                box.classList.remove("X", "O");
-                box.style.pointerEvents = "auto";
-            });
-        }
+            function restartGame() {
+                // Reset State
+                boardState = new Array(9).fill(null);
+                gameActive = true;
+                currentPlayer = "X";
+
+                // Reset UI
+                alertOverlay.style.display = "none";
+                statusText.innerText = "Player X's Turn";
+
+                boxes.forEach((box, index) => {
+                    box.innerText = "";
+                    box.classList.remove("X", "O", "win-line", "disabled");
+                    box.setAttribute('aria-label', `Cell ${index + 1} of 9`);
+                });
+            }
+        });
     </script>
 
 </body>
