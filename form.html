@@ -1,158 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        .form{
-            background: linear-gradient(to top right, #ff0000 0%, #ff9933 100%);
-            background-color: green;
-            background-size: cover;
-            padding: 30px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            gap: 100px;
-}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Registration Form</title>
 
-        button {
-            width: 100px;
-            padding: 10px;
-            background-color: #2ae1cb;
-            color: #000000;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            transition: all 5.5 ease;
-            cursor: pointer;
-}
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-        button:hover {
-            background-color: #4ef076;
-            color: white;
-            transform: scale(1.05);
-            transition: all 0.3s ease;      
-            
-}
-  
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-        body {
-            font-family: Arial;
-            background-repeat: no-repeat;
-            background-size: cover;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-}
+<!-- SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        .form-group,#form-group {
-            color: white;
-            margin-bottom: 1rem;
-}
+<style>
+    /* Reset & Body */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #1f1c2c, #928dab);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        transition: all 0.3s;
+    }
 
-        h1 {
-            margin-bottom: 1rem;
-            text-align: center;
-            color: white;
-            text-decoration: underline;
-}
+    /* Container */
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 40px;
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 1100px;
+        width: 100%;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        animation: fadeIn 1s ease-in-out;
+    }
 
-        input {
-            width:100%;
-            padding: 0.70rem;
-            border: 1px solid #000000;
-            border-radius: 4px;
-}
+    @keyframes fadeIn { from {opacity:0; transform: translateY(20px);} to {opacity:1; transform: translateY(0);} }
 
-        .table{
-            border: 1px solid white;
-            padding: 20px;
-            color: white;
-            height: 300px;
-            overflow-x:auto;
-}
+    /* Left Form */
+    .form-section {
+        flex: 1;
+        min-width: 300px;
+        background: rgba(255,255,255,0.1);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        transition: transform 0.3s;
+    }
 
-        table,th,td{
-            border: 1px solid black;
-            border-collapse: collapse;
-            padding: 10px;
-            text-align: center  ;
-}
+    .form-section:hover { transform: translateY(-5px); }
 
-    </style>
+    .form-section h1 {
+        text-align: center;
+        color: #fff;
+        margin-bottom: 25px;
+        font-weight: 700;
+        font-size: 1.8rem;
+    }
+
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; color: #fff; font-weight: 500; margin-bottom: 5px; }
+    .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border-radius: 10px;
+        border: none;
+        outline: none;
+        background: rgba(255,255,255,0.9);
+        transition: all 0.3s;
+    }
+
+    .form-group input:focus { transform: scale(1.03); background: #fff; }
+
+    .password-box { position: relative; }
+    .password-box i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #333; }
+
+    .error-message { color: #ff6b6b; font-size: 0.8rem; margin-top: 3px; }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 10px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+
+    button.register-btn { background: #00e6b8; color: #000; }
+    button.register-btn:hover { background: #00c49a; transform: scale(1.05); }
+    button.reset-btn { background: #ff4b5c; color: #fff; }
+    button.reset-btn:hover { background: #e33f50; transform: scale(1.05); }
+
+    /* Password Strength */
+    .strength-bar {
+        height: 6px;
+        width: 100%;
+        border-radius: 5px;
+        background: rgba(255,255,255,0.2);
+        margin-top: 5px;
+        overflow: hidden;
+    }
+
+    .strength-bar div {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(to right, #ff4b5c, #f9d423);
+        transition: width 0.3s;
+    }
+
+    /* Right Table */
+    .table-section {
+        flex: 1.2;
+        min-width: 400px;
+        max-height: 400px;
+        overflow-y: auto;
+        background: rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    .table-section h2 {
+        text-align: center;
+        color: #fff;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    table { width: 100%; border-collapse: collapse; color: #fff; }
+    th, td { padding: 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.3); }
+    th { background: rgba(0,0,0,0.3); cursor: pointer; }
+    tr.added { animation: highlight 1s ease-in-out; }
+
+    @keyframes highlight { from { background: #57ffa6; } to { background: transparent; } }
+
+    /* Responsive */
+    @media(max-width: 900px) { .container { flex-direction: column; } }
+
+</style>
 </head>
 <body>
-    
-    <div class="form">
-        <div class="left">
-        <h1>Register</h1>
+
+<div class="container">
+
+    <!-- LEFT FORM -->
+    <div class="form-section">
+        <h1>Register User</h1>
         <form id="registrationForm">
-            <div id="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Enter your username">
                 <small class="error-message" id="usernameError"></small>
             </div>
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
+                <label>Email</label>
+                <input type="email" id="email" placeholder="Enter your email">
                 <small class="error-message" id="emailError"></small>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+                <label>Password</label>
+                <div class="password-box">
+                    <input type="password" id="password" placeholder="Enter password">
+                    <i class="fa-solid fa-eye" onclick="togglePassword()"></i>
+                </div>
+                <div class="strength-bar"><div id="strength"></div></div>
                 <small class="error-message" id="passwordError"></small>
             </div>
-            <button onclick="registerStudent()">REGISTER</button>
-            <button onclick="reset()">RESET</button>
-    
+
+            <button type="button" class="register-btn" onclick="registerUser()">Register</button>
+            <button type="button" class="reset-btn" onclick="resetForm()">Reset</button>
         </form>
     </div>
 
-    <div class="table">
+    <!-- RIGHT TABLE -->
+    <div class="table-section">
+        <h2>Registered Users</h2>
+        <input type="text" id="searchUser" placeholder="Search users..." style="width:100%; padding:8px; border-radius:8px; margin-bottom:10px; border:none;">
         <table id="table">
-            <tr>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Password</th>
-            </tr>
-            
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">ID</th>
+                    <th onclick="sortTable(1)">User</th>
+                    <th onclick="sortTable(2)">Email</th>
+                    <th>Password</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
         </table>
     </div>
-</body>
+
+</div>
+
 <script>
-    let username = document.querySelector("#username");
-    let email = document.querySelector("#email");
-    let password = document.querySelector("#password");
+let idCount = 1;
 
-    function reset(){
-        username.value=""
-        email.value=""
-        password.value=""
+// Toggle password visibility
+function togglePassword() {
+    const pass = document.getElementById("password");
+    const icon = document.querySelector(".password-box i");
+    if(pass.type === "password") { pass.type = "text"; icon.classList.replace("fa-eye", "fa-eye-slash"); }
+    else { pass.type = "password"; icon.classList.replace("fa-eye-slash", "fa-eye"); }
+}
+
+// Reset form
+function resetForm() {
+    document.getElementById("registrationForm").reset();
+    document.getElementById("usernameError").innerText = "";
+    document.getElementById("emailError").innerText = "";
+    document.getElementById("passwordError").innerText = "";
+    document.getElementById("strength").style.width = "0";
+}
+
+// Password strength checker
+document.getElementById("password").addEventListener("input", function() {
+    const val = this.value;
+    let strength = 0;
+    if(val.length >= 5) strength++;
+    if(/[A-Z]/.test(val)) strength++;
+    if(/[0-9]/.test(val)) strength++;
+    if(/[\W]/.test(val)) strength++;
+    document.getElementById("strength").style.width = (strength*25) + "%";
+});
+
+// Validation
+function validateInputs() {
+    let valid = true;
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    document.getElementById("usernameError").innerText = "";
+    document.getElementById("emailError").innerText = "";
+    document.getElementById("passwordError").innerText = "";
+
+    if(username.length < 3){ document.getElementById("usernameError").innerText = "Username must be 3+ chars"; valid=false; }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!emailRegex.test(email)){ document.getElementById("emailError").innerText = "Invalid email"; valid=false; }
+    if(password.length < 5){ document.getElementById("passwordError").innerText = "Password must be 5+ chars"; valid=false; }
+
+    return valid;
+}
+
+// Register user
+function registerUser() {
+    if(!validateInputs()) return;
+    const tableBody = document.querySelector("#table tbody");
+    const tr = document.createElement("tr");
+    tr.classList.add("added");
+    tr.innerHTML = `
+        <td>${idCount++}</td>
+        <td>${document.getElementById("username").value}</td>
+        <td>${document.getElementById("email").value}</td>
+        <td>${document.getElementById("password").value}</td>
+    `;
+    tableBody.appendChild(tr);
+
+    Swal.fire({ title:"Success!", text:"User Registered Successfully", icon:"success", confirmButtonColor:"#00e6b8" });
+    resetForm();
+}
+
+// Table search
+document.getElementById("searchUser").addEventListener("input", function() {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll("#table tbody tr");
+    rows.forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
+    });
+});
+
+// Table sort
+function sortTable(n) {
+    const table = document.getElementById("table");
+    let switching = true, dir = "asc";
+    while(switching){
+        switching=false;
+        let rows = table.rows;
+        for(let i=1;i<rows.length-1;i++){
+            let shouldSwitch=false;
+            let x=rows[i].getElementsByTagName("TD")[n];
+            let y=rows[i+1].getElementsByTagName("TD")[n];
+            if(dir=="asc" ? x.innerHTML.toLowerCase()>y.innerHTML.toLowerCase() : x.innerHTML.toLowerCase()<y.innerHTML.toLowerCase()){
+                shouldSwitch=true; break;
+            }
+        }
+        if(shouldSwitch){ rows[i].parentNode.insertBefore(rows[i+1],rows[i]); switching=true; } 
+        else if(!switching && dir=="asc"){ dir="desc"; switching=true; }
     }
-    
-    document.getElementById("registrationForm").addEventListener("onsubmit",(e)=>{e.preventDefault()})
-    function registerStudent(){
-
-        if(username.value =="" && email.value==""&&password.value=="" ){
-            alert("Please fill all the fields")
-        }else{
-        let tr = document.createElement("tr");
-        let td_username = document.createElement("td");
-        let td_email = document.createElement("td");
-        let td_password = document.createElement("td");
-        let table = document.getElementById("table")
-
-        td_username.innerText= username.value.toString()
-        td_email.innerText= email.value.toString()
-        td_password.innerText= password.value.toString()
-        tr.appendChild(td_username)
-        tr.appendChild(td_email)
-        tr.appendChild(td_password)
-        table.appendChild(tr)
-    }reset()
 }
 </script>
+
+</body>
 </html>
