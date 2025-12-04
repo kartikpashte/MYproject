@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Me - Kartik Pashte Portfolio</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ====================================
+           1. Global Variables & Reset
+           ==================================== */
+        :root {
+            --primary-bg: #0d1a26; /* Deep Ocean Blue */
+            --secondary-bg: #1a2a3a; /* Slightly Lighter Blue */
+            --accent-color: #ff8c42; /* Bright Orange */
+            --text-color-light: #f0f4f8;
+            --text-color-muted: #95a5a6;
+            --card-bg-dark: rgba(26, 42, 58, 0.85);
+            --border-radius: 12px;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+        }
+
+        /* ====================================
+           2. Header (Navbar reused from Portfolio)
+           ==================================== */
+        .site-header {
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 50px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--secondary-bg);
+            flex-wrap: wrap;
+        }
+
+        .logo a {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .nav-list {
+            list-style-type: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-list a {
+            color: var(--text-color-light);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 400;
+            padding: 5px 0;
+            transition: color var(--transition-speed), border-bottom var(--transition-speed);
+        }
+
+        .nav-list a:hover,
+        .nav-list a:focus {
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            outline: none;
+        }
+
+        .nav-list a.active {
+            color: var(--accent-color);
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        /* ====================================
+           3. Main About Section
+           ==================================== */
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-align: center;
+            color: var(--text-color-light);
+            animation: fadeIn 1s ease-out;
+        }
+
+        .about-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 40px;
+            width: 100%;
+            max-width: 1100px;
+            padding: 50px;
+            background-color: var(--card-bg-dark);
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            animation: slideUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .left-panel {
+            flex-shrink: 0;
+            width: 40%;
+            max-width: 380px;
+        }
+
+        .left-panel img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid var(--accent-color);
+            box-shadow: 0 6px 30px rgba(255, 140, 66, 0.3);
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+        }
+
+        .left-panel img:hover {
+            transform: scale(1.03) rotate(-1deg);
+            box-shadow: 0 10px 40px rgba(255, 140, 66, 0.5);
+            cursor: pointer;
+        }
+
+        .right-panel {
+            width: 60%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .right-panel p {
+            font-size: 1.15rem;
+            margin-bottom: 20px;
+            line-height: 1.7;
+            color: var(--text-color-light);
+            transition: color 0.3s ease;
+        }
+
+        .hidden-text {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.7s ease-in-out, opacity 0.5s ease;
+            margin-bottom: 0;
+        }
+
+        .hidden-text.show {
+            max-height: 300px;
+            opacity: 1;
+            margin-bottom: 20px;
+        }
+
+        .read-more-btn {
+            background-color: var(--accent-color);
+            color: var(--primary-bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color var(--transition-speed), transform var(--transition-speed);
+            margin-top: 10px;
+        }
+
+        .read-more-btn:hover {
+            background-color: #ff9d61;
+            transform: translateY(-2px);
+        }
+
+        /* ====================================
+           4. Responsive
+           ==================================== */
+        @media (max-width: 900px) {
+            .about-content {
+                flex-direction: column;
+                padding: 30px;
+                gap: 30px;
+            }
+            .left-panel,
+            .right-panel {
+                width: 100%;
+                text-align: center;
+            }
+            .right-panel {
+                align-items: center;
+            }
+            .right-panel p {
+                text-align: center;
+            }
+            .left-panel img {
+                max-width: 250px;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 500px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .right-panel p {
+                font-size: 1rem;
+            }
+            .read-more-btn {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="navbar">
+            <div class="logo">
+                <a href="./index.html">Kartik Pashte</a>
+            </div>
+            <ul class="nav-list">
+                <li><a href="./index.html">Projects</a></li>
+                <li><a href="./portfolio.html">Portfolio</a></li>
+                <li><a href="./aboutmain.html" class="active">About</a></li>
+                <li><a href="./contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h1>About Me</h1>
+
+    <main class="about-content">
+        <div class="left-panel">
+            <img src="https://cdn.dribbble.com/userupload/12833208/file/original-e2f8e6039413b916440b576dfcc4aa63.jpg?resize=1024x768&vertical=center" 
+                 alt="Kartik Pashte Portrait">
+        </div>
+
+        <div class="right-panel">
+            <p>Hello! I'm <strong>Kartik Pashte</strong>, a passionate web developer focused on creating engaging and functional websites and applications. I specialize in HTML, CSS, and JavaScript, with projects ranging from interactive games to professional portfolio sites.</p>
+
+            <div class="hidden-text">
+                <p>With a keen eye for design and user experience, I aim to deliver solutions that are both visually appealing and highly functional. I constantly learn new technologies and best practices to stay ahead in the ever-evolving web development world.</p>
+                <p>My goal is to combine creativity and code to craft websites that leave a lasting impact. Whether it's a fun interactive project or a full-scale professional site, I put care into every detail.</p>
+            </div>
+
+            <button class="read-more-btn" id="readMoreToggle">Read More</button>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.getElementById('readMoreToggle');
+            const hiddenContent = document.querySelector('.hidden-text');
+
+            toggleButton.addEventListener('click', () => {
+                hiddenContent.classList.toggle('show');
+                toggleButton.textContent = hiddenContent.classList.contains('show') ? 'Read Less' : 'Read More';
+            });
+        });
+    </script>
+</body>
+</html>
